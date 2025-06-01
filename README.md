@@ -1,6 +1,6 @@
 # Khazadlab
 
-## README Introduction
+## Introduction
 
 Welcome to my homelab! Everything runs on **Kubernetes k3s**, with services managed by:
 - **Traefik**  
