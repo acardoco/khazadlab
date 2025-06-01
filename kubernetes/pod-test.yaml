@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: simple-ui
+  namespace: default
+  labels:
+    app: simple-ui
+spec:
+  containers:
+    - name: web
+      image: nginx:alpine
+      ports:
+        - containerPort: 80
+      # nginx ya sirve una página estática simple en /
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-simple-ui
+  namespace: default
+spec:
+  selector:
+    app: simple-ui
+  ports:
+    - port: 80
+      targetPort: 80
+      protocol: TCP
+      name: http
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-simple-ui
+  namespace: default
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "30"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "1800"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "1800"
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: pod-test.khazadlab.duckdns.org
+      http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: svc-simple-ui
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - pod-test.khazadlab.duckdns.org
+      secretName: tls-pod-test-ingress

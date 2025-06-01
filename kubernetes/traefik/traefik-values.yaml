@@ -1,0 +1,758 @@
+# Default values for Traefik
+# This is a YAML-formatted file.
+# Declare variables to be passed into templates
+
+################################################################################
+# 1) IMAGEN
+################################################################################
+image:
+  # -- Traefik image host registry
+  registry: docker.io
+  # -- Traefik image repository
+  repository: traefik
+  # -- defaults to appVersion. It's used for version checking, even prefixed with experimental- or latest-.
+  # When a digest is required, `versionOverride` can be used to set the version.
+  tag:
+  # -- Traefik image pull policy
+  pullPolicy: IfNotPresent
+
+# -- Add additional label to all resources
+commonLabels: {}
+
+################################################################################
+# 2) DEPLOYMENT
+################################################################################
+deployment:
+  # -- Enable deployment
+  enabled: true
+  # -- Deployment or DaemonSet
+  kind: Deployment
+  # -- Number of pods of the deployment (only applies when kind == Deployment)
+  replicas: 1
+  # -- Number of old history to retain to allow rollback (If not set, default Kubernetes value is set to 10)
+  revisionHistoryLimit:
+  # -- Amount of time (in seconds) before Kubernetes will send the SIGKILL signal if Traefik does not shut down
+  terminationGracePeriodSeconds: 60
+  # -- The minimum number of seconds Traefik needs to be up and running before the DaemonSet/Deployment controller considers it available
+  minReadySeconds: 0
+
+  ## -- Override the liveness/readiness port. This is useful to integrate traefik
+  ## with an external Load Balancer that performs healthchecks.
+  ## Default: ports.traefik.port
+  healthchecksPort:
+  ## -- Override the liveness/readiness host. Useful for getting ping to respond on non-default entryPoint.
+  ## Default: ports.traefik.hostIP if set, otherwise Pod IP
+  healthchecksHost: ""
+  ## -- Override the liveness/readiness scheme. Useful for getting ping to
+  ## respond on websecure entryPoint.
+  healthchecksScheme:
+  ## -- Override the readiness path.
+  ## Default: /ping
+  readinessPath: ""
+  # -- Override the liveness path.
+  # Default: /ping
+  livenessPath: ""
+  # -- Additional deployment annotations (e.g. for jaeger-operator sidecar injection)
+  annotations: {}
+  # -- Additional deployment labels (e.g. for filtering deployment by custom labels)
+  labels: {}
+  # -- Additional pod annotations (e.g. for mesh injection or prometheus scraping)
+  # It supports templating. One can set it with values like traefik/name: '{{ template "traefik.name" . }}'
+  podAnnotations: {}
+  # -- Additional Pod labels (e.g. for filtering Pod by custom labels)
+  podLabels: {}
+  # -- Additional containers (e.g. for metric offloading sidecars)
+  additionalContainers: []
+  # https://docs.datadoghq.com/developers/dogstatsd/unix_socket/?tab=host
+  # - name: socat-proxy
+  #   image: alpine/socat:1.0.5
+  #   args: ["-s", "-u", "udp-recv:8125", "unix-sendto:/socket/socket"]
+  #   volumeMounts:
+  #     - name: dsdsocket
+  #       mountPath: /socket
+  # -- Additional volumes available for use with initContainers and additionalContainers
+  additionalVolumes: []
+  # - name: dsdsocket
+  #   hostPath:
+  #     path: /var/run/statsd-exporter
+  # -- Additional initContainers (e.g. for setting file permission as shown below)
+  initContainers: []
+  # The "volume-permissions" init container is required if you run into permission issues.
+  # Related issue: https://github.com/traefik/traefik-helm-chart/issues/396
+  # - name: volume-permissions
+  #   image: busybox:latest
+  #   command: ["sh", "-c", "touch /data/acme.json; chmod -v 600 /data/acme.json"]
+  #   volumeMounts:
+  #     - name: data
+  #       mountPath: /data
+  # -- Use process namespace sharing
+  shareProcessNamespace: false
+  # -- Custom pod DNS policy. Apply if `hostNetwork: true`
+  dnsPolicy: ""
+  # -- Custom pod [DNS config](https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.30/#poddnsconfig-v1-core)
+  dnsConfig: {}
+  # -- Custom [host aliases](https://kubernetes.io/docs/tasks/network/customize-hosts-file-for-pods/)
+  hostAliases: []
+  # -- Pull secret for fetching traefik container image
+  imagePullSecrets: []
+  # -- Pod lifecycle actions
+  lifecycle: {}
+  # preStop:
+  #   exec:
+  #     command: ["/bin/sh", "-c", "sleep 40"]
+  # postStart:
+  #   httpGet:
+  #     path: /ping
+  #     port: 8080
+  #     host: localhost
+  #     scheme: HTTP
+  # -- Set a runtimeClassName on pod
+  runtimeClassName: ""
+
+# -- [Pod Disruption Budget](https://kubernetes.io/docs/reference/kubernetes-api/policy-resources/pod-disruption-budget-v1/)
+podDisruptionBudget:
+  enabled: false
+  maxUnavailable:
+  minAvailable:
+
+################################################################################
+# 3) INGRESSCLASS (CREAR UNO DEFAULT PARA TRAEFIK)
+################################################################################
+ingressClass:
+  enabled: true
+  isDefaultClass: true
+  name: ""
+
+################################################################################
+# 4) CONFIGURACIÓN CORE
+################################################################################
+core:
+  # -- Can be used to use globally v2 router syntax. Deprecated since v3.4 /!\.
+  # See https://doc.traefik.io/traefik/v3.0/migration/v2-to-v3/#new-v3-syntax-notable-changes
+  defaultRuleSyntax: ""
+
+################################################################################
+# 5) EXPERIMENTAL FEATURES
+################################################################################
+experimental:
+  # -- Defines whether all plugins must be loaded successfully for Traefik to start
+  abortOnPluginFailure: false
+  fastProxy:
+    # -- Enables the FastProxy implementation.
+    enabled: false
+    # -- Enable debug mode for the FastProxy implementation.
+    debug: false
+  kubernetesGateway:
+    # -- Enable traefik experimental GatewayClass CRD
+    enabled: false
+  # -- Enable traefik experimental plugins
+  plugins: {}
+
+################################################################################
+# 6) GATEWAY (GATEWAY API) — NO USADO EN ESTE EJEMPLO
+################################################################################
+gateway:
+  enabled: true
+  name: ""
+  namespace: ""
+  annotations: {}
+  infrastructure: {}
+  listeners:
+    web:
+      port: 8000
+      hostname: ""
+      protocol: HTTP
+      namespacePolicy:
+    # websecure: (comentado porque no lo usamos directamente aquí)
+    #   port: 8443
+    #   hostname:
+    #   protocol: HTTPS
+    #   namespacePolicy:
+    #   certificateRefs:
+    #   mode:
+
+gatewayClass:
+  enabled: true
+  name: ""
+  labels: {}
+
+################################################################################
+# 7) INGRESSROUTE (DASHBOARD + HEALTHCHECK)
+################################################################################
+ingressRoute:
+  dashboard:
+    enabled: true
+    annotations: {}
+    labels: {}
+    # Exponemos el Dashboard por HTTPS en /dashboard y /api
+    matchRule: PathPrefix(`/dashboard`) || PathPrefix(`/api`)
+    services:
+      - name: api@internal
+        kind: TraefikService
+    entryPoints:
+      - websecure
+    middlewares:
+      - "dashboard-auth@file"
+    tls: {}
+  healthcheck:
+    enabled: false
+    annotations: {}
+    labels: {}
+    matchRule: PathPrefix(`/ping`)
+    services:
+      - name: ping@internal
+        kind: TraefikService
+    entryPoints:
+      - traefik
+    middlewares: []
+    tls: {}
+
+################################################################################
+# 8) ESTRATEGIA DE UPDATE
+################################################################################
+updateStrategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxUnavailable: 0
+    maxSurge: 1
+
+################################################################################
+# 9) PROBES
+################################################################################
+readinessProbe:
+  failureThreshold: 1
+  initialDelaySeconds: 2
+  periodSeconds: 10
+  successThreshold: 1
+  timeoutSeconds: 2
+
+livenessProbe:
+  failureThreshold: 3
+  initialDelaySeconds: 2
+  periodSeconds: 10
+  successThreshold: 1
+  timeoutSeconds: 2
+
+startupProbe: {}
+
+################################################################################
+# 10) PROVIDERS
+################################################################################
+providers:
+  kubernetesCRD:
+    enabled: true
+    allowCrossNamespace: false
+    allowExternalNameServices: false
+    allowEmptyServices: true
+    ingressClass: ""
+    namespaces: []
+    nativeLBByDefault: false
+
+  kubernetesIngress:
+    enabled: true
+    allowExternalNameServices: false
+    allowEmptyServices: true
+    ingressClass:
+    namespaces: []
+    publishedService:
+      enabled: true
+      pathOverride: ""
+    nativeLBByDefault: false
+
+  kubernetesGateway:
+    enabled: false
+    experimentalChannel: false
+    namespaces: []
+    labelselector: ""
+    nativeLBByDefault: false
+    statusAddress:
+      ip: ""
+      hostname: ""
+      service:
+        enabled: true
+        name: ""
+        namespace: ""
+
+  file:
+    enabled: true
+    watch: true
+    content: |
+      http:
+        middlewares:
+          dashboard-auth:
+            basicAuth:
+              users:
+                - "ancaco:$apr1$Z6qFMt6w$ydx8vHHc2f8KeJveHT9Mg0"
+        # Aquí define tantas rutas/middlewares como necesites.
+
+################################################################################
+# 11) VOLUMES Y VOLUMEMOUNTS ADICIONALES
+################################################################################
+volumes: []
+additionalVolumeMounts: []
+
+################################################################################
+# 12) LOGS
+################################################################################
+logs:
+  general:
+    format:
+    level: "INFO"
+    filePath: ""
+    noColor: false
+  access:
+    enabled: false
+    format:
+    bufferingSize:
+    filters:
+      statuscodes: ""
+      retryattempts: false
+      minduration: ""
+    addInternals: false
+    fields:
+      general:
+        defaultmode: keep
+        names: {}
+      headers:
+        defaultmode: drop
+        names: {}
+
+################################################################################
+# 13) MÉTRICAS
+################################################################################
+metrics:
+  addInternals: false
+
+  prometheus:
+    entryPoint: metrics
+    addEntryPointsLabels:
+    addRoutersLabels:
+    addServicesLabels:
+    buckets:
+    manualRouting: false
+    headerLabels: {}
+    service:
+      enabled: false
+      labels: {}
+      annotations: {}
+    disableAPICheck:
+    serviceMonitor:
+      enabled: false
+      metricRelabelings: []
+      relabelings: []
+      jobLabel: ""
+      interval: ""
+      honorLabels: false
+      scrapeTimeout: ""
+      honorTimestamps: false
+      enableHttp2: false
+      followRedirects: false
+      additionalLabels: {}
+      namespace: ""
+      namespaceSelector: {}
+    prometheusRule:
+      enabled: false
+      additionalLabels: {}
+      namespace: ""
+
+  otlp:
+    enabled: false
+    addEntryPointsLabels:
+    addRoutersLabels:
+    addServicesLabels:
+    explicitBoundaries: []
+    pushInterval: ""
+    serviceName:
+    http:
+      enabled: false
+      endpoint: ""
+      headers: {}
+      tls:
+        ca: ""
+        cert: ""
+        key: ""
+        insecureSkipVerify:
+    grpc:
+      enabled: false
+      endpoint: ""
+      insecure: false
+      tls:
+        ca: ""
+        cert: ""
+        key: ""
+        insecureSkipVerify: false
+
+################################################################################
+# 14) TRACING (OPCIONAL)
+################################################################################
+tracing:
+  addInternals: false
+  serviceName:
+  resourceAttributes: {}
+  capturedRequestHeaders: []
+  capturedResponseHeaders: []
+  safeQueryParams: []
+  sampleRate:
+  otlp:
+    enabled: false
+    http:
+      enabled: false
+      endpoint: ""
+      headers: {}
+      tls:
+        ca: ""
+        cert: ""
+        key: ""
+        insecureSkipVerify:
+    grpc:
+      enabled: false
+      endpoint: ""
+      insecure: false
+      tls:
+        ca: ""
+        cert: ""
+        key: ""
+        insecureSkipVerify: false
+  grpc:
+    enabled: false
+    endpoint: ""
+    insecure: false
+    tls:
+      ca: ""
+      cert: ""
+      key: ""
+      insecureSkipVerify: false
+
+################################################################################
+# 15) ARGUMENTOS GLOBALES / ADICIONALES
+################################################################################
+globalArguments:
+  - "--global.checknewversion"
+  - "--global.sendanonymoususage"
+
+additionalArguments: []
+env: []
+envFrom: []
+
+################################################################################
+# 16) PUERTOS Y ENTRYPOINTS
+################################################################################
+ports:
+  traefik:
+    port: 8080
+    hostPort:
+    hostIP:
+    expose:
+      default: false
+    exposedPort: 8080
+    protocol: TCP
+
+  web:
+    port: 8000
+    expose:
+      default: false
+    exposedPort: 80
+    targetPort:
+    protocol: TCP
+    nodePort:
+    redirections:
+      entryPoint: {}
+    forwardedHeaders:
+      trustedIPs: []
+      insecure: false
+    proxyProtocol:
+      trustedIPs: []
+      insecure: false
+    transport:
+      respondingTimeouts:
+        readTimeout:
+        writeTimeout:
+        idleTimeout:
+      lifeCycle:
+        requestAcceptGraceTimeout:
+        graceTimeOut:
+      keepAliveMaxRequests:
+      keepAliveMaxTime:
+
+  websecure:
+    port: 8443
+    hostPort:
+    containerPort:
+    expose:
+      default: true
+    exposedPort: 443
+    targetPort:
+    protocol: TCP
+    nodePort:
+    appProtocol:
+    allowACMEByPass: false
+    http3:
+      enabled: false
+      advertisedPort:
+    forwardedHeaders:
+      trustedIPs: []
+      insecure: false
+    proxyProtocol:
+      trustedIPs: []
+      insecure: false
+    transport:
+      respondingTimeouts:
+        readTimeout:
+        writeTimeout:
+        idleTimeout:
+      lifeCycle:
+        requestAcceptGraceTimeout:
+        graceTimeOut:
+      keepAliveMaxRequests:
+      keepAliveMaxTime:
+    tls:
+      enabled: true
+      options: ""
+      certResolver: ""
+      domains: []
+
+################################################################################
+# 17) MÉTRICAS (HOSTNETWORK)
+################################################################################
+metrics:
+  port: 9100
+  expose:
+    default: false
+  exposedPort: 9100
+  protocol: TCP
+
+################################################################################
+# 18) TLS OPTIONS Y TLS STORE
+################################################################################
+tlsOptions: {}
+tlsStore: {}
+
+################################################################################
+# 19) SERVICIO PARA TRAEFIK
+################################################################################
+service:
+  enabled: true
+  single: true
+  type: LoadBalancer
+  annotations: {}
+  annotationsTCP: {}
+  annotationsUDP: {}
+  labels: {}
+  spec: {}
+  loadBalancerSourceRanges: []
+  externalIPs: []
+  additionalServices: {}
+  # internal:
+  #   type: ClusterIP
+  #   labels: {}
+  #   annotations: {}
+  #   spec: {}
+  #   loadBalancerSourceRanges: []
+  #   externalIPs: []
+  #   ipFamilies: ["IPv4","IPv6"]
+
+################################################################################
+# 20) AUTOSCALING
+################################################################################
+autoscaling:
+  enabled: false
+
+################################################################################
+# 21) PERSISTENCIA (opcional para ACME)
+################################################################################
+persistence:
+  enabled: false
+  name: data
+  existingClaim: ""
+  accessMode: ReadWriteOnce
+  size: 128Mi
+  storageClass: ""
+  volumeName: ""
+  path: /data
+  annotations: {}
+  subPath: ""
+
+################################################################################
+# 22) CERTIFICATES RESOLVERS
+################################################################################
+certificatesResolvers:
+  letsencrypt:
+    acme:
+      email: andres.cardosoc12@gmail.com
+      storage: /data/acme.json
+      httpChallenge:
+        entryPoint: web
+
+################################################################################
+# 23) HOSTNETWORK Y RBAC
+################################################################################
+hostNetwork: true
+
+rbac:
+  enabled: true
+  namespaced: false
+
+################################################################################
+# 24) SECURITY / SERVICE ACCOUNT
+################################################################################
+podSecurityPolicy:
+  enabled: false
+
+serviceAccount:
+  name: ""
+
+serviceAccountAnnotations: {}
+
+################################################################################
+# 25) RECURSOS (RESOURCES)
+################################################################################
+resources: {}
+
+################################################################################
+# 26) AFFINITY, NODESELECTOR, TOLERATIONS
+################################################################################
+affinity: {}
+nodeSelector: {}
+tolerations: []
+topologySpreadConstraints: []
+
+priorityClassName: ""
+
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop: [ALL]
+  readOnlyRootFilesystem: true
+
+podSecurityContext:
+  runAsGroup: 65532
+  runAsNonRoot: true
+  runAsUser: 65532
+
+################################################################################
+# 27) OBJETOS EXTRA (extraObjects)
+################################################################################
+extraObjects: []
+
+################################################################################
+# 28) OVERRIDES DE NAMESPACE E INSTANCIA
+################################################################################
+namespaceOverride: ""
+instanceLabelOverride: ""
+versionOverride: ""
+
+################################################################################
+# 29) TRAEFIK HUB (opcional)
+################################################################################
+hub:
+  token: ""
+  namespaces: []
+  apimanagement:
+    enabled: false
+    admission:
+      listenAddr: ""
+      secretName: "hub-agent-cert"
+      customWebhookCertificate: {}
+      restartOnCertificateChange: true
+    openApi:
+      validateRequestMethodAndPath: false
+  experimental:
+    aigateway: false
+  providers:
+    consulCatalogEnterprise:
+      enabled: false
+      cache: false
+      connectAware: false
+      connectByDefault: false
+      constraints: ""
+      defaultRule: "Host(`{{ normalize .Name }}`)"
+      endpoint:
+        address: ""
+        datacenter: ""
+        endpointWaitTime: 0
+        httpauth:
+          password: ""
+          username: ""
+        scheme: ""
+        tls:
+          ca: ""
+          cert: ""
+          insecureSkipVerify: false
+          key: ""
+        token: ""
+      exposedByDefault: true
+      namespaces: ""
+      partition: ""
+      prefix: "traefik"
+      refreshInterval: 15
+      requireConsistent: false
+      serviceName: "traefik"
+      stale: false
+      watch: false
+    microcks:
+      enabled: false
+      auth:
+        clientId: ""
+        clientSecret: ""
+        endpoint: ""
+        token: ""
+      endpoint: ""
+      pollInterval: 30
+      pollTimeout: 5
+      tls:
+        ca: ""
+        cert: ""
+        insecureSkipVerify: false
+        key: ""
+  redis:
+    cluster:
+    database:
+    endpoints: ""
+    username: ""
+    password: ""
+    sentinel:
+      masterset: ""
+      username: ""
+      password: ""
+    timeout: ""
+    tls:
+      ca: ""
+      cert: ""
+      key: ""
+      insecureSkipVerify: false
+  sendlogs:
+  tracing:
+    additionalTraceHeaders:
+      enabled: false
+      traceContext:
+        parentId: ""
+        traceId: ""
+        traceParent: ""
+        traceState: ""
+
+################################################################################
+# 30) OCI Y AZURE MARKETPLACE (si aplica)
+################################################################################
+oci_meta:
+  enabled: false
+  repo: traefik
+  images:
+    proxy:
+      image: traefik
+      tag: latest
+    hub:
+      image: traefik-hub
+      tag: latest
+
+global:
+  azure:
+    enabled: false
+    images:
+      proxy:
+        image: traefik
+        tag: latest
+        registry: docker.io/library
+      hub:
+        image: traefik-hub
+        tag: latest
+        registry: ghcr.io/traefik
