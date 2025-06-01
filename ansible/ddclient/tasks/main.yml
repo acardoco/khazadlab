@@ -1,0 +1,28 @@
+---
+# roles/ddclient/tasks/main.yml
+
+- name: Instalar paquete ddclient
+  ansible.builtin.apt:
+    name: ddclient
+    state: present
+    update_cache: yes
+
+- name: Asegurar que el servicio ddclient está habilitado y parado inicialmente
+  ansible.builtin.service:
+    name: ddclient
+    enabled: yes
+    state: stopped
+
+- name: Copiar plantilla de configuración de ddclient
+  ansible.builtin.template:
+    src: ddclient.conf.j2
+    dest: /etc/ddclient.conf
+    owner: root
+    group: root
+    mode: '0640'
+
+- name: Forzar recarga de configuración y arrancar ddclient
+  ansible.builtin.service:
+    name: ddclient
+    state: restarted
+    enabled: yes

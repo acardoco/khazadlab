@@ -1,10 +1,10 @@
 ---
-- name: Configuración completa del nodo Ubuntu
+- name: Configurar nodo Ubuntu (K3s + Cert-Manager + ddclient para DuckDNS + Rancher)
   hosts: all
   become: true
 
   vars:
-    # Variables “estáticas” que no son secretas
+    # Variables “públicas” o de configuración general:
     netplan_iface: wlp2s0
     netplan_ip: "192.168.1.60/24"
     netplan_gateway: "192.168.1.1"
@@ -12,21 +12,16 @@
       - "1.1.1.1"
       - "8.8.8.8"
     k3s_version: "v1.28.1+k3s1"
-    # IMPORTANTE: no definimos aquí las variables secretas,
-    # las cargaremos desde .env más abajo.
 
   tasks:
-    - name: Cargar variables de entorno desde .env
+    - name: Cargar variables de entorno desde fichero .env
       ansible.builtin.include_vars:
-        file: ".env"
+        file: "{{ playbook_dir }}/.env"
         name: env_vars
         type: env
 
-    # Ahora todas las líneas en .env pasan a estar en `env_vars`
-    # Por ejemplo: env_vars.K3S_TOKEN, env_vars.DUCKDNS_TOKEN, etc.
-
-    - name: Pasar las variables cargadas a variables globales
-      set_fact:
+    - name: Pasar variables de env_vars a “facts”
+      ansible.builtin.set_fact:
         k3s_install_token: "{{ env_vars.K3S_TOKEN }}"
         duckdns_token: "{{ env_vars.DUCKDNS_TOKEN }}"
         duckdns_domain: "{{ env_vars.DUCKDNS_DOMAIN }}"
@@ -34,8 +29,8 @@
         wifi_password: "{{ env_vars.WIFI_PASSWORD }}"
         letsencrypt_email: "{{ env_vars.LETSENCRYPT_EMAIL }}"
 
-    # A partir de este punto, puedes llamar a tus roles usando esas variables:
   roles:
-    - role: common
-    - role: k3s
-    - role: certmanager
+    - common
+    - k3s
+    - certmanager
+    - ddclient

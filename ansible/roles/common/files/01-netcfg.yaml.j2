@@ -1,0 +1,16 @@
+network:
+  version: 2
+  renderer: networkd
+
+  wifis:
+    {{ netplan_iface }}:
+      dhcp4: no
+      addresses: [{{ netplan_ip }}]
+      nameservers:
+        addresses: [{{ netplan_nameservers | join(", ") }}]
+      routes:
+        - to: default
+          via: {{ netplan_gateway }}
+      access-points:
+        "{{ wifi_ssid }}":
+          password: "{{ wifi_password }}"

@@ -1,0 +1,8 @@
+# roles/ddclient/templates/ddclient.conf.j2
+
+# Configuration file for ddclient (DuckDNS)
+protocol=duckdns
+use=web, web=checkip.duckdns.org
+login="{{ duckdns_token }}"
+password="{{ duckdns_token }}"
+{{ duckdns_domain }}

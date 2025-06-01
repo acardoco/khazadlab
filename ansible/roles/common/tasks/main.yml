@@ -1,0 +1,147 @@
+---
+# roles/common/tasks/main.yml
+
+- name: Instalar paquetes básicos
+  apt:
+    name:
+      - ssh
+      - ufw
+      - curl
+      - wget
+      - git
+      - socat
+      - conntrack
+    state: present
+    update_cache: true
+
+- name: Deshabilitar swap en /etc/fstab
+  replace:
+    path: /etc/fstab
+    regexp: '^\s*(.+\s+swap\s+.+)$'
+    replace: '# \1'
+
+- name: Desactivar swap en runtime
+  command: swapoff -a
+  when: ansible_swaptotal_mb > 0
+
+- name: Asegurar que netplan detecte br_netfilter
+  modprobe:
+    name: br_netfilter
+    state: present
+
+- name: Asegurar que nf_conntrack y nat se carguen al iniciar
+  copy:
+    dest: /etc/modules-load.d/k3s-nat.conf
+    content: |
+      nf_conntrack
+      nf_conntrack_ipv4
+      nf_nat
+      nf_nat_ipv4
+
+- name: Ajustar sysctl para K3s (forward + bridged traffic)
+  sysctl:
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    sysctl_set: yes
+    state: present
+  loop:
+    - { key: 'net.bridge.bridge-nf-call-iptables', value: 1 }
+    - { key: 'net.bridge.bridge-nf-call-ip6tables', value: 1 }
+    - { key: 'net.ipv4.ip_forward', value: 1 }
+
+- name: Configurar iptables para legacy (si detecta nft active)
+  block:
+    - name: Cambiar iptables a modo legacy
+      alternatives:
+        name: iptables
+        path: /usr/sbin/iptables-legacy
+
+    - name: Cambiar ip6tables a modo legacy
+      alternatives:
+        name: ip6tables
+        path: /usr/sbin/ip6tables-legacy
+
+    - name: Cambiar arptables a modo legacy
+      alternatives:
+        name: arptables
+        path: /usr/sbin/arptables-legacy
+
+    - name: Cambiar ebtables a modo legacy
+      alternatives:
+        name: ebtables
+        path: /usr/sbin/ebtables-legacy
+  when: >
+    # Solo si iptables -L da pistas de usar nft; de lo contrario se omite
+    ansible_facts['distribution'] == 'Ubuntu'
+
+- name: Insertar plantilla de Netplan (IP estática)
+  template:
+    src: "01-netcfg.yaml.j2"
+    dest: "/etc/netplan/01-netcfg.yaml"
+    owner: root
+    group: root
+    mode: 0640
+
+- name: Forzar aplicación de Netplan
+  command: netplan apply
+
+- name: Habilitar systemd-resolved y link resolv.conf
+  block:
+    - name: Habilitar systemd-resolved
+      systemd:
+        name: systemd-resolved.service
+        state: started
+        enabled: true
+
+    - name: Crear enlace simbólico a stub-resolv.conf
+      file:
+        src: /run/systemd/resolve/stub-resolv.conf
+        dest: /etc/resolv.conf
+        state: link
+
+- name: Configurar UFW (abrir puertos básicos)
+  ufw:
+    rule: allow
+    port: "{{ item }}"
+    proto: tcp
+  loop:
+    - 22
+    - 80
+    - 443
+    - 6443
+    - 10250
+    - 8472     # VXLAN de Flannel
+    - 30000:32767
+  notify:
+    - enable ufw
+
+- name: Desactivar UFW por defecto (para evitar interacción)
+  ufw:
+    state: enabled
+    policy: deny
+
+- name: Asegurar SELinux en modo permisivo (en Ubuntu no suele aplicar, pero por si acaso)
+  command: setenforce 0
+  ignore_errors: true
+
+- name: Crear usuario SSH (si fuera necesario)
+  user:
+    name: deploy
+    shell: /bin/bash
+    groups: sudo
+    state: present
+    create_home: yes
+
+- name: Instalar claves públicas SSH para acceso passwordless
+  authorized_key:
+    user: deploy
+    state: present
+    key: "{{ lookup('file', '~/.ssh/id_ed25519.pub') }}"
+  when: lookup('file', '~/.ssh/id_ed25519.pub', errors='ignore') is not none
+
+# Handler para activar UFW
+- name: enable ufw
+  systemd:
+    name: ufw
+    state: restarted
+    enabled: true

@@ -1,0 +1,37 @@
+---
+# roles/k3s/tasks/main.yml
+
+- name: Instalar dependencias (curl, socat, conntrack ya vinieron en common)
+  apt:
+    name:
+      - curl
+      - apt-transport-https
+      - ca-certificates
+      - gnupg2
+    state: present
+    update_cache: true
+
+- name: Descargar script de instalación de K3s
+  get_url:
+    url: "https://get.k3s.io"
+    dest: /tmp/install_k3s.sh
+    mode: '0755'
+
+- name: Instalar K3s sin external-ip
+  environment:
+    INSTALL_K3S_VERSION: "{{ k3s_version }}"
+    K3S_TOKEN: "{{ k3s_install_token }}"
+  command: "sh /tmp/install_k3s.sh server"
+  args:
+    creates: /usr/local/bin/k3s
+
+
+- name: Copiar kubeconfig a usuario ansible_user
+  become_user: "{{ ansible_user }}"
+  file:
+    src: /etc/rancher/k3s/k3s.yaml
+    dest: /home/{{ ansible_user }}/.kube/config
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0600'
+  when: ansible_user != 'root'
