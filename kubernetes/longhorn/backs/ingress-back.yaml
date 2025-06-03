@@ -5,9 +5,16 @@ metadata:
   namespace: longhorn-system
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     nginx.ingress.kubernetes.io/proxy-connect-timeout: "30"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "1800"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "1800"
+    # Indica a Traefik que use HTTPS en el entrypoint 'websecure'
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    # Aquí es donde enlazas tu Ingress con el Middleware ForwardAuth
+    traefik.ingress.kubernetes.io/router.middlewares: |
+      longhorn-system-longhorn-oauth2-proxy@kubernetescrd
 spec:
   ingressClassName: traefik
   rules:

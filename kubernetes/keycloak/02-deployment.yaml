@@ -51,6 +51,8 @@ spec:
               value: INFO
             - name: KC_METRICS_ENABLED
               value: "true"
+            - name: KC_PROXY_HEADERS
+              value: "xforwarded"    # sin esto, me da un error raro al intentar re-logearme https://github.com/keycloak/keycloak/issues/33330#issuecomment-2740486452
             # Variables de admin:
             - name: KEYCLOAK_ADMIN
               valueFrom:
@@ -62,6 +64,13 @@ spec:
                 secretKeyRef:
                   name: keycloak-admin
                   key: KEYCLOAK_ADMIN_PASSWORD
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "500m"
+            limits:
+              memory: "1024Mi"
+              cpu: "1"
           ports:
             - containerPort: 8080
           volumeMounts:
