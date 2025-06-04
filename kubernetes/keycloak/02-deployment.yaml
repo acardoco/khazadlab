@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: keycloak
-          image: quay.io/keycloak/keycloak:26.2.5   # o la versión que prefieras
+          image: quay.io/keycloak/keycloak:26.2.5   
           imagePullPolicy: IfNotPresent
           args: ["start"]
           env:
@@ -76,6 +76,9 @@ spec:
           volumeMounts:
             - name: keycloak-data
               mountPath: /opt/keycloak/data
+            # ) emptyDir para temporales
+            - name: keycloak-tmp
+              mountPath: /opt/keycloak/data/tmp
           # livenessProbe:
           #   httpGet:
           #     path: /health/ready
@@ -96,3 +99,5 @@ spec:
         - name: keycloak-data
           persistentVolumeClaim:
             claimName: keycloak-data-pvc
+        - name: keycloak-tmp
+          emptyDir: {}

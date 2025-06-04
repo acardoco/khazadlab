@@ -11,3 +11,5 @@ spec:
       - X-Forwarded-User
       - X-Forwarded-Email
       - X-Forwarded-Preferred-Username
+      - X-Auth-Request-Redirect
+      - Authorization

@@ -36,6 +36,8 @@ spec:
             - --set-xauthrequest=true
             - --reverse-proxy=true
             - --proxy-prefix=/oauth2
+            - --auth-logging=true
+            - --whitelist-domain=khazadlab.duckdns.org
           env:
             - name: CLIENT_SECRET
               valueFrom:

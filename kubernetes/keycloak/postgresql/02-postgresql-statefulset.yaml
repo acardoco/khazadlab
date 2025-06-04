@@ -33,15 +33,18 @@ spec:
                 secretKeyRef:
                   name: postgres-secret
                   key: postgres-password
+            - name: PGDATA # para que longhorn no se queje
+              value: /var/lib/postgresql/data/pgdata
           volumeMounts:
             - name: postgres-storage
               mountPath: /var/lib/postgresql/data
+              subPath: pgdata # para que longhorn no se queje
   volumeClaimTemplates:
     - metadata:
         name: postgres-storage
       spec:
         accessModes: ["ReadWriteOnce"]
-        storageClassName: local-path
+        storageClassName: longhorn
         resources:
           requests:
-            storage: 10Gi
+            storage: 5Gi

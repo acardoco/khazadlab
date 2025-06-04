@@ -6,7 +6,7 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
-  storageClassName: local-path    # en k3s suele usarse local-path
+  storageClassName: longhorn   
   resources:
     requests:
-      storage: 5Gi                # ajusta al tamaño que necesites
+      storage: 5Gi               
