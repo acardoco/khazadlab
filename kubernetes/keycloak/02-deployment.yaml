@@ -76,7 +76,7 @@ spec:
           volumeMounts:
             - name: keycloak-data
               mountPath: /opt/keycloak/data
-            # ) emptyDir para temporales
+            # ) emptyDir para temporales: para que el pvc con longhorn no de problemas
             - name: keycloak-tmp
               mountPath: /opt/keycloak/data/tmp
           # livenessProbe:

@@ -1,0 +1,399 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: almudena-site-web
+  namespace: regalo-almu
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html lang="es">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Elija su regalito</title>
+      <style>
+        /* RESET BÁSICO */
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+
+        body {
+          font-family: Arial, sans-serif;
+          background-color: #f5f5f5;
+          color: #333;
+          line-height: 1.4;
+        }
+
+        a {
+          text-decoration: none;
+          color: inherit;
+        }
+        a:hover {
+          text-decoration: underline;
+        }
+
+        /* CABECERA */
+        .header {
+          background-color: #4caf50;
+          color: #fff;
+          padding: 20px 10px;
+          text-align: center;
+        }
+        .header h1 {
+          font-size: 1.8rem;
+          margin-bottom: 5px;
+        }
+        .header p {
+          font-size: 1rem;
+        }
+
+        /* CONTENEDOR PRINCIPAL */
+        .container {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          align-items: flex-start;
+          padding: 20px;
+          gap: 20px;
+        }
+
+        /* TARJETAS */
+        .card {
+          background-color: #fff;
+          border-radius: 8px;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+          overflow: hidden;
+          width: 300px;
+          display: flex;
+          flex-direction: column;
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .card:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .card img {
+          width: 100%;
+          height: auto;
+          display: block;
+        }
+
+        .card-content {
+          padding: 15px;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          flex: 1;
+        }
+
+        .card-content h2 {
+          font-size: 1.25rem;
+          color: #4caf50;
+          margin-bottom: 5px;
+          text-align: center;
+        }
+
+        .card-content p {
+          font-size: 0.95rem;
+          text-align: center;
+        }
+
+        .card-content ul {
+          list-style: disc inside;
+          margin-top: 10px;
+          font-size: 0.9rem;
+        }
+
+        /* DETALLES / DESPLEGABLES */
+        details {
+          margin-top: 10px;
+          width: 100%;
+        }
+
+        summary {
+          background-color: #eef5ee;
+          border-radius: 5px;
+          padding: 8px 12px;
+          font-size: 1rem;
+          font-weight: bold;
+          cursor: pointer;
+          user-select: none;
+        }
+
+        summary::-webkit-details-marker {
+          display: none;
+        }
+
+        .workshop-item {
+          display: flex;
+          align-items: flex-start;
+          margin-top: 10px;
+          gap: 10px;
+        }
+        .workshop-item img {
+          width: 45px;
+          height: 45px;
+          border-radius: 4px;
+          object-fit: cover;
+          flex-shrink: 0;
+        }
+        .workshop-item-content h3 {
+          font-size: 1rem;
+          margin-bottom: 4px;
+          color: #333;
+        }
+        .workshop-item-content p {
+          font-size: 0.85rem;
+          color: #555;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+          .container {
+            flex-direction: column;
+            align-items: center;
+          }
+          .card {
+            width: 100%;
+            max-width: 400px;
+          }
+        }
+      </style>
+    </head>
+    <body>
+
+      <header class="header">
+        <h1>Talleres que podrían gustarte ❤️</h1>
+        <p>Pulsa y echa un ojo a cada opción (cuando la sepas, me escribes ;D)</p>
+      </header>
+
+      <main class="container">
+        <!-- The Workshop Madrid Card -->
+        <section class="card">
+          <img
+            src="https://images.squarespace-cdn.com/content/v1/5b9269b88f5130fcc52398dc/6c214a7e-2eab-44e0-9898-e6190a26b472/IMG_8294.JPG?format=2500w"
+            alt="The Workshop Madrid"
+          />
+          <div class="card-content">
+            <h2><a href="https://www.theworkshopmadrid.com/tallerestwm" target="_blank">The Workshop Madrid</a></h2>
+            <p>Un sitio genial donde puedes aprender manualidades, carpintería y más.</p>
+            <details>
+              <summary>Ver todos los talleres</summary>
+
+              <div class="workshop-item">
+                <img
+                  src="https://images.squarespace-cdn.com/content/v1/5b9269b88f5130fcc52398dc/1606298141520-9V5U9F2Y35AR8QIOUJN8/IMG_6126.jpg?format=300w"
+                  alt="Talla de cucharas"
+                />
+                <div class="workshop-item-content">
+                  <h3>Taller de talla de cucharas</h3>
+                  <p>Aprende a darle forma a cucharas de madera con tus propias manos, ideal para quienes disfrutan el trabajo manual.</p>
+                </div>
+              </div>
+
+              <div class="workshop-item">
+                <img
+                  src="https://images.squarespace-cdn.com/content/v1/5b9269b88f5130fcc52398dc/1578954010927-V50KZ7WIEVW2ZSLSZ6PJ/Title_Tablas.JPG?format=500w"
+                  alt="Tablas de quesos"
+                />
+                <div class="workshop-item-content">
+                  <h3>Taller de tablas de quesos</h3>
+                  <p>Diseña y construye una tabla de madera para quesos, usando máquinas básicas de carpintería.</p>
+                </div>
+              </div>
+
+              <div class="workshop-item">
+                <img
+                  src="https://images.squarespace-cdn.com/content/v1/5b9269b88f5130fcc52398dc/1583398156308-PKKZPB98UFZC0WIOQABA/IMG_8109.jpg?format=500w"
+                  alt="Botellero Flotante"
+                />
+                <div class="workshop-item-content">
+                  <h3>Taller Botellero Flotante</h3>
+                  <p>Haz un estante de vino flotante para tu casa, súper práctico y decorativo.</p>
+                </div>
+              </div>
+
+              <div class="workshop-item">
+                <img
+                  src="https://images.squarespace-cdn.com/content/v1/5b9269b88f5130fcc52398dc/1653560041152-ALWDJHZ4M8D8497CMY89/IMG_2477.jpg?format=300w"
+                  alt="Enmarcación"
+                />
+                <div class="workshop-item-content">
+                  <h3>Taller de Enmarcación</h3>
+                  <p>Aprende a crear marcos de madera para tus cuadros o fotos favoritas, paso a paso (ojo: hay que llevar la foto preparada).</p>
+                </div>
+              </div>
+
+              <div class="workshop-item">
+                <img
+                  src="https://images.squarespace-cdn.com/content/v1/5b9269b88f5130fcc52398dc/1607432280394-TWEU5NX44M0RWEE2Q6KG/IMG_9486.JPG?format=500w"
+                  alt="Caja Carpintero Japonés"
+                />
+                <div class="workshop-item-content">
+                  <h3>Taller Caja Carpintero Japonés</h3>
+                  <p>Construye una caja de madera con técnicas tradicionales japonesas, muy chula para guardar cosas.</p>
+                </div>
+              </div>
+
+              <div class="workshop-item">
+                <img
+                  src="https://images.squarespace-cdn.com/content/v1/5b9269b88f5130fcc52398dc/1f28d55d-7dd8-4abe-8746-97dea76a316e/IMG_0341.jpg?format=500w"
+                  alt="Banco 10"
+                />
+                <div class="workshop-item-content">
+                  <h3>Taller de Banco 10</h3>
+                  <p>Haz tu propio banco de madera maciza, perfecto para principiantes y para llevarte un mueble hecho por ti.</p>
+                </div>
+              </div>
+
+              <div class="workshop-item">
+                <img
+                  src="https://images.squarespace-cdn.com/content/v1/5b9269b88f5130fcc52398dc/d4b43a1a-a6d6-4105-8e05-7065676b4aff/Cuero+Bolso+A+07.jpg?format=500w"
+                  alt="Cuero Artesanal"
+                />
+                <div class="workshop-item-content">
+                  <h3>Taller de cuero artesanal</h3>
+                  <p>Aprende a hacer artículos de cuero, como carteras o llaveros, desde cero y sin complicaciones.</p>
+                </div>
+              </div>
+
+              <div class="workshop-item">
+                <img
+                  src="https://images.squarespace-cdn.com/content/v1/5b9269b88f5130fcc52398dc/2ec71d62-90b7-41a3-8131-dc6e9c823cea/WhatsApp+Image+2024-04-17+at+09.51.17.jpg?format=500w"
+                  alt="Bordado Técnicas Mixtas"
+                />
+                <div class="workshop-item-content">
+                  <h3>Taller de bordado mixto</h3>
+                  <p>Descubre formas diferentes de bordar y combínalo con otras manualidades para resultados únicos.</p>
+                </div>
+              </div>
+
+              <div class="workshop-item">
+                <img
+                  src="https://images.squarespace-cdn.com/content/v1/5b9269b88f5130fcc52398dc/9b9f72e7-1a31-471f-954a-b2562630e3eb/en-el-salo%CC%81n.jpg?format=500w"
+                  alt="Kokedamas"
+                />
+                <div class="workshop-item-content">
+                  <h3>Taller de Kokedamas</h3>
+                  <p>Haz macetas con musgo y cuélgalas en tu salón, muy fácil y queda precioso.</p>
+                </div>
+              </div>
+
+              <div class="workshop-item">
+                <img
+                  src="https://images.squarespace-cdn.com/content/v1/5b9269b88f5130fcc52398dc/9b9f72e7-1a31-471f-954a-b2562630e3eb/en-el-salo%CC%81n.jpg?format=500w"
+                  alt="Cianotipia Experimental"
+                />
+                <div class="workshop-item-content">
+                  <h3>Taller de cianotipia experimental</h3>
+                  <p>Prueba técnicas fotográficas antiguas y crea impresiones sobre papel o tela de forma creativa.</p>
+                </div>
+              </div>
+
+              <div class="workshop-item">
+                <img
+                  src="https://images.squarespace-cdn.com/content/v1/5b9269b88f5130fcc52398dc/400ff3ed-587e-4e7c-a21b-1fe438742db0/Screenshot+2025-02-28+at+07.48.54.png?format=500w"
+                  alt="Ocean Resin 3D"
+                />
+                <div class="workshop-item-content">
+                  <h3>Masterclass Ocean Resin 3D</h3>
+                  <p>Trabaja con resina epóxica y haz figuras en 3D con un toque marinero gracias a Azul Caribe Art.</p>
+                </div>
+              </div>
+
+            </details>
+          </div>
+        </section>
+
+        <!-- CandleLab Card -->
+        <section class="card">
+          <img
+            src="https://candlelabes.wordpress.com/wp-content/uploads/2025/01/image-35.jpeg"
+            alt="Taller de velas CandleLab"
+          />
+          <div class="card-content">
+            <h2><a href="https://candlelabes.wordpress.com/" target="_blank">CandleLab</a></h2>
+            <p>Un lugar agradable para crear velas de soja a tu gusto, ¡pinta, huele y relájate!</p>
+            <ul>
+              <li>Elige colores, fragancias y estilos: tu vela, a tu manera.</li>
+              <li>Bebida y picoteo mientras disfrutas del proceso.</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- Planthae Card -->
+        <section class="card">
+          <img
+            src="https://sp-ao.shortpixel.ai/client/to_webp,q_glossy,ret_img,w_750/https://www.planthae.com/wp-content/uploads/2021/02/WhatsApp-Image-2021-02-21-at-19.17.58.jpeg"
+            alt="Taller Planthae"
+          />
+          <div class="card-content">
+            <h2><a href="https://www.planthae.com/cursos-y-talleres/" target="_blank">Planthae</a></h2>
+            <p>Si te flipan las plantas, aquí tienes talleres para cuidar y decorar con verde.</p>
+            <ul>
+              <li>Aprende a cuidar y reconocer plantas de interior como un pro.</li>
+              <li>Haz tu propio plantharium: mini jardines para tu mesa.</li>
+              <li>Propaga plantas por esquejes para llenar tu casa de vida.</li>
+              <li>Trucos de trasplantes y sustratos para que tus plantas vivan felices.</li>
+              <li>Prensa y conserva hojas para crear tu propio herbario casero.</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- Con el Alma de Marta Card -->
+        <section class="card">
+          <img
+            src="https://conelalmademarta.com/88-large_default/vela-buho.jpg"
+            alt="Taller Con el Alma de Marta"
+          />
+          <div class="card-content">
+            <h2><a href="https://conelalmademarta.com/34-talleres-y-workshop" target="_blank">Con el Alma de Marta</a></h2>
+            <p>Velas y aromas hechos a mano: aprende a mezclar esencias y decorar velas con mucha onda.</p>
+            <details>
+              <summary>Ver todos los talleres</summary>
+
+              <div class="workshop-item">
+                <img
+                  src="https://conelalmademarta.com/65-home_default/taller-presencial-de-iniciacion-a-la-creacion-de-velas-en-madrid.jpg"
+                  alt="Introducción a las velas"
+                />
+                <div class="workshop-item-content">
+                  <h3>Introducción a las velas</h3>
+                  <p>Aprende sobre tipos de cera, mechas y trucos básicos para crear velas desde cero.</p>
+                </div>
+              </div>
+
+              <div class="workshop-item">
+                <img
+                  src="https://conelalmademarta.com/168-home_default/taller-presencial-de-arte-floral-con-velas-en-madrid.jpg"
+                  alt="Arte floral con velas"
+                />
+                <div class="workshop-item-content">
+                  <h3>Arte floral con velas</h3>
+                  <p>Combina flores secas y velas para crear decoraciones perfumadas y llenas de vida.</p>
+                </div>
+              </div>
+
+              <div class="workshop-item">
+                <img
+                  src="https://conelalmademarta.com/114-home_default/taller-presencial-de-perfumadores-de-cera-vegetal-en-madrid.jpg"
+                  alt="Perfumadores de cera"
+                />
+                <div class="workshop-item-content">
+                  <h3>Perfumadores de cera</h3>
+                  <p>Reutiliza restos de velas para hacer perfumadores caseros que aromatizan cualquier rincón.</p>
+                </div>
+              </div>
+
+            </details>
+          </div>
+        </section>
+      </main>
+
+    </body>
+    </html>
+
+

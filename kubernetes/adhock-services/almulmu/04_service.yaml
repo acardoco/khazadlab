@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: almudena-static-svc
+  namespace: regalo-almu
+spec:
+  selector:
+    app: almudena-static
+  ports:
+    - port: 80
+      targetPort: 80

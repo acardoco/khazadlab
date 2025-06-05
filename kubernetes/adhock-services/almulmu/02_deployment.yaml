@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: almudena-static
+  namespace: regalo-almu
+  labels:
+    app: almudena-static
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: almudena-static
+  template:
+    metadata:
+      labels:
+        app: almudena-static
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:alpine
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: html-volume
+              mountPath: /usr/share/nginx/html
+      volumes:
+        - name: html-volume
+          configMap:
+            name: almudena-site
+            # optional: items si quisieras mapear archivos con otros nombres
+            # items:
+            #   - key: index.html
+            #     path: index.html
