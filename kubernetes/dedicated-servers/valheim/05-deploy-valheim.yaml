@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: valheim
+  namespace: valheim
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: valheim
+  template:
+    metadata:
+      labels:
+        app: valheim
+    spec:
+      containers:
+      - name: server
+        image: ghcr.io/lloesche/valheim-server:sha-20e6258
+        env:
+        - name: SERVER_NAME
+          value: ${SERVER_NAME}
+        - name: WORLD_NAME
+          value: ${WORLD_NAME}
+        - name: SERVER_PASS
+          value: ${SERVER_PASS}
+        - name: SERVER_PUBLIC
+          value: "true"
+        resources:
+          requests:
+            memory: "1024Mi"
+            cpu: "2"
+          limits:
+            memory: "4096Mi"
+            cpu: "4"
+        ports:
+        - containerPort: 2456
+          protocol: UDP
+        - containerPort: 2457
+          protocol: UDP
+        volumeMounts:
+        - name: datos
+          mountPath: /config
+      volumes:
+      - name: datos
+        persistentVolumeClaim:
+          claimName: valheim-pvc

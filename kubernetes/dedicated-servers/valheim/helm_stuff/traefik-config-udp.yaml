@@ -1,0 +1,43 @@
+# /var/lib/rancher/k3s/server/manifests/traefik-additional-config.yaml
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+metadata:
+  name: traefik
+  namespace: kube-system
+spec:
+  valuesContent: |-
+    # 1) API pública y dashboard (insecure)
+    additionalArguments:
+      - "--api.insecure=true"
+      - "--api.dashboard=true"
+      - "--entryPoints.traefik.address=:8080/tcp"
+
+      # 2) EntryPoints UDP para Valheim
+      - "--entryPoints.valheim.address=:2456/udp"
+      - "--entryPoints.valheim-query.address=:2457/udp"
+
+    # 3) Puertos a exponer en el LoadBalancer
+    ports:
+      # Dashboard
+      traefik:
+        port:        8080
+        exposedPort: 8080
+        expose:
+          default:  true
+          internal: true
+
+      # Valheim — juego
+      valheim:
+        port:        2456
+        exposedPort: 2456
+        protocol:    UDP
+        expose:
+          default: true
+
+      # Valheim — consulta/handshake
+      valheim-query:
+        port:        2457
+        exposedPort: 2457
+        protocol:    UDP
+        expose:
+          default: true

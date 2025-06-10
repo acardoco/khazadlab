@@ -1,0 +1,25 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRouteUDP
+metadata:
+  name: valheim-game
+  namespace: valheim
+spec:
+  entryPoints:
+    - valheim
+  routes:
+    - services:
+        - name: valheim-svc
+          port: 2456
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRouteUDP
+metadata:
+  name: valheim-query
+  namespace: valheim
+spec:
+  entryPoints:
+    - valheim-query
+  routes:
+    - services:
+        - name: valheim-svc
+          port: 2457

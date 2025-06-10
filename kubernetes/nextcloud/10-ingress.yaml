@@ -11,6 +11,8 @@ metadata:
     kubernetes.io/ingress.class: traefik
     traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
+    # Reglas para .well-known
+    traefik.ingress.kubernetes.io/router.middlewares: nextcloud-rewrite-headers@kubernetescrd
 spec:
   ingressClassName: traefik
   rules:

@@ -1,0 +1,23 @@
+#todo este fichero se pone en /var/lib/rancher/k3s/server/manifests/ del master y reiniciar k3s.
+#Permite añadir los entrypoints que necesita el valheim + de paso, le meto el svc para portforwardear el dashboard de traefik
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+metadata:
+  name: traefik
+  namespace: kube-system
+spec:
+  valuesContent: |-
+    # 1. Habilita API pública y dashboard (insecure para desarrollo) :contentReference[oaicite:0]{index=0}
+    additionalArguments:
+      - "--api.insecure=true"
+      - "--api.dashboard=true"
+      # 2. Define un entryPoint TCP 'traefik' en el puerto 8080
+      - "--entryPoints.traefik.address=:8080/tcp"
+    # 3. Di al chart que exponga ese puerto en el LoadBalancer :contentReference[oaicite:1]{index=1}
+    ports:
+      traefik:
+        port: 8080         # puerto interno en el contenedor/entryPoint
+        exposedPort: 8080 # puerto que verá el LoadBalancer
+        expose:
+          default: true   # expónlo públicamente
+          internal: true  # expónlo también en NodePort si quieres
