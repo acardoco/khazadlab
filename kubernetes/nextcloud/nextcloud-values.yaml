@@ -305,6 +305,18 @@ nextcloud:
           // Opcional: si tu Traefik usa otras cabeceras para Host o Proto
           'forwarded_host_headers'     => ['HTTP_X_FORWARDED_HOST'],
           'forwarded_proto_headers'    => ['HTTP_X_FORWARDED_PROTO'],
+
+          // usaremos APCu para cache local
+          'memcache.local'       => '\\OC\\Memcache\\APCu',
+          // Redis para cache distribuida y locking
+          'memcache.distributed' => '\\OC\\Memcache\\Redis',
+          'memcache.locking'     => '\\OC\\Memcache\\Redis',
+          'redis' => [
+            'host'     => 'nextcloud-redis',
+            'port'     => 6379,
+            'timeout'  => 0.0,
+            'password' => '',  // si habilitaste auth, pon aquí
+          ],
         ]);
 
   ## Para keycloak
@@ -554,10 +566,10 @@ postgresql:
 ##
 
 redis:
-  enabled: false
+  enabled: true
   auth:
     enabled: true
-    password: 'changeme'
+    password: ${REDIS_PASSWORD}
     # name of an existing secret with Redis® credentials (instead of auth.password), must be created ahead of time
     existingSecret: ""
     # Password key to be retrieved from existing secret

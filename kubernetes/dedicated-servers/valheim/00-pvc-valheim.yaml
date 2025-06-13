@@ -4,6 +4,7 @@ metadata:
   name: valheim-pvc
   namespace: valheim
 spec:
+  storageClassName: longhorn
   accessModes:
     - ReadWriteOnce
   resources:
