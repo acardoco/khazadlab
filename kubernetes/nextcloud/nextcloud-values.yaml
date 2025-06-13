@@ -257,15 +257,15 @@ nextcloud:
   ##
   ## Extra environment variables
   extraEnv:
-  # - name: OIDC_DISCOVERY_URI
-  #   value: "https://keycloak.khazadlab.duckdns.org/realms/homelab/.well-known/openid-configuration"
-  # - name: OIDC_CLIENT_ID
-  #   value: "nextcloud"
-  # - name: OIDC_CLIENT_SECRET
-  #   valueFrom:
-  #     secretKeyRef:
-  #       name: nextcloud-keycloak-secret
-  #       key: client-secret
+  - name: OIDC_DISCOVERY_URI
+    value: "https://keycloak.khazadlab.duckdns.org/realms/homelab/.well-known/openid-configuration"
+  - name: OIDC_CLIENT_ID
+    value: "nextcloud"
+  - name: OIDC_CLIENT_SECRET
+    valueFrom:
+      secretKeyRef:
+        name: nextcloud-keycloak-secret
+        key: client-secret
   - name: OVERWRITEPROTOCOL
     value: https
   - name: OVERWRITEHOST
