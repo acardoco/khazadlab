@@ -275,77 +275,54 @@ nextcloud:
   - name: OVERWRITECLIURL
     value: https://nextcloud.khazadlab.duckdns.org
   configs:
-      003-reverse-proxy.config.php: |-
-        <?php
-        if (!isset($CONFIG) || !is_array($CONFIG)) {
-            $CONFIG = [];
-        }
-        $CONFIG = array_merge($CONFIG, [
-          // Dominio y protocolo público
-          'overwritehost'      => 'nextcloud.khazadlab.duckdns.org',
-          'overwriteprotocol'  => 'https',
-          'overwritewebroot'   => '/',
-          'overwrite.cli.url'  => 'https://nextcloud.khazadlab.duckdns.org',
-
-          // Proxies internos de k3s y Traefik
-          'trusted_proxies' => [
-            '10.42.0.0/16',    // Pod network
-            '10.43.0.0/16',    // Service network
-            '10.43.203.42',    // Traefik Service ClusterIP
-            '10.42.0.1',       // k3s gateway
+  002-openid-connect.config.php: |-
+    <?php
+    if (!isset($CONFIG) || !is_array($CONFIG)) {
+      $CONFIG = [];
+    }
+    if (class_exists('\OC_User_OpenIDConnect')) {
+      $CONFIG = array_merge($CONFIG, [
+        'openid_connect_auto_redirect' => true,
+        'openid_connect_debug'         => true,
+        'openid_connect_providers' => [
+          'keycloak' => [
+            'identifier'   => 'keycloak',
+            'discoveryUri' => getenv('OIDC_DISCOVERY_URI'),
+            'clientId'     => getenv('OIDC_CLIENT_ID'),
+            'clientSecret' => getenv('OIDC_CLIENT_SECRET'),
+            'scope'        => 'openid profile email',
           ],
+        ],
+        'user_backends' => [
+          ['class'=>'OC_User_OpenIDConnect','arguments'=>['keycloak']],
+        ],
+      ]);
+    }
 
-          // Cabeceras que tu Traefik rellena con la IP real del cliente
-          'forwarded_for_headers' => [
-            'HTTP_X_FORWARDED_FOR',
-            'HTTP_X_REAL_IP',
-            'HTTP_CLIENT_IP',
-          ],
-
-          // Opcional: si tu Traefik usa otras cabeceras para Host o Proto
-          'forwarded_host_headers'     => ['HTTP_X_FORWARDED_HOST'],
-          'forwarded_proto_headers'    => ['HTTP_X_FORWARDED_PROTO'],
-
-          // usaremos APCu para cache local
-          'memcache.local'       => '\\OC\\Memcache\\APCu',
-          // Redis para cache distribuida y locking
-          'memcache.distributed' => '\\OC\\Memcache\\Redis',
-          'memcache.locking'     => '\\OC\\Memcache\\Redis',
-          'redis' => [
-            'host'     => 'nextcloud-redis',
-            'port'     => 6379,
-            'timeout'  => 0.0,
-            'password' => '',  // si habilitaste auth, pon aquí
-          ],
-        ]);
-
-  ## Para keycloak
-  # configs:
-  #   openid_connect.config.php: |-
-  #     <?php
-  #     // Si por alguna razón $CONFIG no existe, lo inicializamos para evitar warnings
-  #     if (!isset($CONFIG) || !is_array($CONFIG)) {
-  #         $CONFIG = [];
-  #     }
-  #     $CONFIG = array_merge(is_array($CONFIG)?$CONFIG:[], [
-  #       'openid_connect_auto_redirect' => true,
-        
-  #       'openid_connect_providers' => [
-  #         'keycloak' => [
-  #           'identifier'    => 'keycloak',
-  #           'discoveryUri'  => getenv('OIDC_DISCOVERY_URI'),
-  #           'clientId'      => getenv('OIDC_CLIENT_ID'),
-  #           'clientSecret'  => getenv('OIDC_CLIENT_SECRET'),
-  #           'scope'         => 'openid profile email',
-  #         ],
-  #       ],
-  #       'user_backends' => [
-  #         [
-  #           'class'     => 'OC_User_OpenIDConnect',
-  #           'arguments' => ['keycloak'],
-  #         ],
-  #       ],
-  #     ]);
+  003-reverse-proxy.config.php: |-
+    <?php
+    if (!isset($CONFIG) || !is_array($CONFIG)) {
+        $CONFIG = [];
+    }
+    $CONFIG = array_merge($CONFIG, [
+      'overwritehost'        => 'nextcloud.khazadlab.duckdns.org',
+      'overwriteprotocol'    => 'https',
+      'overwritewebroot'     => '/',
+      'overwrite.cli.url'    => 'https://nextcloud.khazadlab.duckdns.org',
+      'trusted_proxies'      => ['10.42.0.0/16','10.43.0.0/16','10.43.203.42','10.42.0.1'],
+      'forwarded_for_headers'=> ['HTTP_X_FORWARDED_FOR','HTTP_X_REAL_IP'],
+      'forwarded_host_headers'=> ['HTTP_X_FORWARDED_HOST'],
+      'forwarded_proto_headers'=> ['HTTP_X_FORWARDED_PROTO'],
+      'memcache.local'       => '\\OC\\Memcache\\APCu',
+      'memcache.distributed' => '\\OC\\Memcache\\Redis',
+      'memcache.locking'     => '\\OC\\Memcache\\Redis',
+      'redis' => [
+        'host'     => 'nextcloud-redis',
+        'port'     => 6379,
+        'timeout'  => 0.0,
+        'password' => '',
+      ],
+    ]);
 
   # Extra init containers that runs before pods start.
   extraInitContainers: []
