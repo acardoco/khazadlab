@@ -8,6 +8,9 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-connect-timeout: "30"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "1800"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "1800"
+    traefik.ingress.kubernetes.io/readtimeout:  "3600"
+    traefik.ingress.kubernetes.io/writetimeout: "3600"
+    traefik.ingress.kubernetes.io/idleTimeout:   "3600"
     kubernetes.io/ingress.class: traefik
     traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
