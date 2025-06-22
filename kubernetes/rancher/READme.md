@@ -22,6 +22,6 @@ helm install rancher rancher-stable/rancher \
 # 4. Verificar el despliegue
 kubectl -n cattle-system rollout status deploy/rancher
 
-# 5 Más info
+# 5. Más info
  
-Mirar en [Guía oficial de instalación y actualización de Rancher](https://ranchermanager.docs.rancher.com/getting-started/installation-and-upgrade/install-upgrade-on-a-kubernetes-cluster)
+Para más info: [Guía oficial de instalación y actualización de Rancher](https://ranchermanager.docs.rancher.com/getting-started/installation-and-upgrade/install-upgrade-on-a-kubernetes-cluster).
