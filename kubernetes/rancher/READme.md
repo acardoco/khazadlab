@@ -8,23 +8,19 @@ export RANCHER_PASSWORD=<tu-contraseña>   # bootstrap password para admin
 ```
 # 2. Añade repo y crea namespace
 ```bash
-helm repo add rancher-stable https://releases.rancher.com/server-charts/stable
+elm repo add rancher-latest https://releases.rancher.com/server-charts/latest
 helm repo update
 kubectl create namespace cattle-system
 ```
 # 3. Instala Rancher
 ```bash
-helm install rancher rancher-stable/rancher \
-  --namespace cattle-system  \
-  --create-namespace \
-  --set hostname=$RANCHER_DOMAIN \
-  --set bootstrapPassword=$RANCHER_PASSWORD \
-  --set replicas=1 \
-  --set ingress.tls.source=letsEncrypt  \
-  --set letsencrypt.email=$EMAIL  \
-  --set letsencrypt.ingress.class=traefik \
-  --set ingress.ingressClassName=traefik \
-  --set installCRDs=true
+helm install rancher rancher-latest/rancher  \
+  --namespace cattle-system   \
+  --set hostname=rancher.khazadlab.duckdns.org  \
+  --set ingress.tls.source=letsEncrypt   \
+  --set letsencrypt.email=andres.cardosoc12@gmail.com   \
+  --set letsencrypt.ingress.class=traefik  \
+  --set replicas=1
 ```
 # 4. Verificar el despliegue
 ```bash
@@ -49,3 +45,4 @@ for ns in $(kubectl get ns --field-selector=status.phase=Terminating -o jsonpath
 EOF
 done
 ```
+
