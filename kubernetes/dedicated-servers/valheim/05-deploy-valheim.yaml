@@ -16,6 +16,8 @@ spec:
       containers:
       - name: server
         image: ghcr.io/lloesche/valheim-server:sha-20e6258
+        stdin: true
+        tty: true
         env:
         - name: SERVER_NAME
           value: ${SERVER_NAME}
@@ -24,6 +26,12 @@ spec:
         - name: SERVER_PASS
           value: ${SERVER_PASS}
         - name: SERVER_PUBLIC
+          value: "true"
+        - name: SERVER_ARGS
+          value: "-console"
+        - name: ADMINLIST_IDS
+          value: "76561197990034797"
+        - name: BEPINEX
           value: "true"
         resources:
           requests:
