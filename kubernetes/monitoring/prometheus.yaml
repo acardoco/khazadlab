@@ -45,7 +45,7 @@ customRules: {}
 ## Create default rules for monitoring the cluster
 ##
 defaultRules:
-  create: true
+  create: false
   rules:
     alertmanager: true
     etcd: true
@@ -269,7 +269,7 @@ alertmanager:
 
   ## Deploy alertmanager
   ##
-  enabled: true
+  enabled: false
 
   ## Annotations for Alertmanager
   ##
@@ -968,9 +968,9 @@ grafana:
       logs: /var/log/grafana
       plugins: /var/lib/grafana/plugins
     server:
-      root_url: https://grafana.platon.ari-aidata.eu
+      root_url: https://grafana.khazadlab.duckdns.org
       serve_from_sub_path: true
-      domain: platon.ari-aidata.eu
+      domain: khazadlab.duckdns.org
     auth.generic_oauth:
       enabled: true
       name: Keycloak
@@ -979,12 +979,18 @@ grafana:
       login_attribute_path: username
       email_attribute_path: email
       name_attribute_path: full_name
-      auth_url: https://keycloak.platon.ari-aidata.eu/realms/platon/protocol/openid-connect/auth
-      token_url: https://keycloak.platon.ari-aidata.eu/realms/platon/protocol/openid-connect/token
-      api_url: https://keycloak.platon.ari-aidata.eu/realms/platon/protocol/openid-connect/userinfo
+      auth_url: https://keycloak.khazadlab.duckdns.org/realms/homelab/protocol/openid-connect/auth
+      token_url: https://keycloak.khazadlab.duckdns.org/realms/homelab/protocol/openid-connect/token
+      api_url: https://keycloak.khazadlab.duckdns.org/realms/homelab/protocol/openid-connect/userinfo
       client_id: grafana
-      client_secret: ${KEYCLOAK_SECRET}
+      # client_secret: ${KEYCLOAK_SECRET}
       role_attribute_path: contains(roles[*], 'admin') && 'Admin' || contains(roles[*], 'editor') && 'Editor' || 'Viewer'
+  env:
+  - name: GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET
+    valueFrom:
+      secretKeyRef:
+        name: grafana-oauth
+        key: client-secret
   deploymentStrategy:
     type: RollingUpdate
     rollingUpdate:
@@ -1064,10 +1070,10 @@ grafana:
   persistence:
     enabled: true
     type: sts
-    storageClassName: "nfs-client"
+    storageClassName: "longhorn"
     accessModes:
       - ReadWriteOnce
-    size: 20Gi
+    size: 10Gi
     finalizers:
       - kubernetes.io/pvc-protection
 
@@ -1221,7 +1227,7 @@ kubernetesServiceMonitors:
 ## Component scraping the kube api server
 ##
 kubeApiServer:
-  enabled: true
+  enabled: false
   tlsConfig:
     serverName: kubernetes
     insecureSkipVerify: false
@@ -1295,7 +1301,7 @@ kubeApiServer:
 ## Component scraping the kubelet and kubelet-hosted cAdvisor
 ##
 kubelet:
-  enabled: true
+  enabled: false
   namespace: kube-system
 
   serviceMonitor:
@@ -1501,7 +1507,7 @@ kubelet:
 ## Component scraping the kube controller manager
 ##
 kubeControllerManager:
-  enabled: true
+  enabled: false
 
   ## If your kube controller manager is not deployed as a pod, specify IPs it can be found on
   ##
@@ -1604,7 +1610,7 @@ kubeControllerManager:
 ## Component scraping coreDns. Use either this or kubeDns
 ##
 coreDns:
-  enabled: true
+  enabled: false
   service:
     enabled: true
     port: 9153
@@ -1776,7 +1782,7 @@ kubeDns:
 ## Component scraping etcd
 ##
 kubeEtcd:
-  enabled: true
+  enabled: false
 
   ## If your etcd is not deployed as a pod, specify IPs it can be found on
   ##
@@ -1881,7 +1887,7 @@ kubeEtcd:
 ## Component scraping kube scheduler
 ##
 kubeScheduler:
-  enabled: true
+  enabled: false
 
   ## If your kube scheduler is not deployed as a pod, specify IPs it can be found on
   ##
@@ -1983,7 +1989,7 @@ kubeScheduler:
 ## Component scraping kube proxy
 ##
 kubeProxy:
-  enabled: true
+  false: true
 
   ## If your kube proxy is not deployed as a pod, specify IPs it can be found on
   ##
@@ -2071,7 +2077,7 @@ kubeProxy:
 ## Component scraping kube state metrics
 ##
 kubeStateMetrics:
-  enabled: true
+  enabled: false
 
 ## Configuration for kube-state-metrics subchart
 ##
@@ -2145,7 +2151,7 @@ kube-state-metrics:
 ## Deploy node exporter as a daemonset to all nodes
 ##
 nodeExporter:
-  enabled: true
+  enabled: false
   operatingSystems:
     linux:
       enabled: true
@@ -2243,7 +2249,7 @@ prometheus-node-exporter:
 ## Manages Prometheus and Alertmanager components
 ##
 prometheusOperator:
-  enabled: true
+  enabled: false
 
   ## Use '{{ template "kube-prometheus-stack.fullname" . }}-operator' by default
   fullnameOverride: ""
@@ -3481,7 +3487,7 @@ prometheus:
     ## Defaults to 30s.
     ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/release-0.44/pkg/prometheus/promcfg.go#L180-L183
     ##
-    scrapeInterval: ""
+    scrapeInterval: 60s
 
     ## Number of seconds to wait for target to respond before erroring
     ##
@@ -3499,7 +3505,7 @@ prometheus:
 
     ## Interval between consecutive evaluations.
     ##
-    evaluationInterval: ""
+    evaluationInterval: 60s
 
     ## ListenLocal makes the Prometheus server listen on loopback, so that it does not bind against the Pod IP.
     ##
@@ -3748,7 +3754,7 @@ prometheus:
 
     ## How long to retain metrics
     ##
-    retention: 30d
+    retention: 7d
 
     ## Maximum size of metrics
     ##
@@ -3846,7 +3852,14 @@ prometheus:
 
     ## Resource limits & requests
     ##
-    resources: {}
+    # resources: {}
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 300m
+        memory: 256Mi
     # requests:
     #   memory: 400Mi
 
