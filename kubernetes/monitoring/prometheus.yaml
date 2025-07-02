@@ -45,7 +45,7 @@ customRules: {}
 ## Create default rules for monitoring the cluster
 ##
 defaultRules:
-  create: false
+  create: true
   rules:
     alertmanager: true
     etcd: true
@@ -983,14 +983,9 @@ grafana:
       token_url: https://keycloak.khazadlab.duckdns.org/realms/homelab/protocol/openid-connect/token
       api_url: https://keycloak.khazadlab.duckdns.org/realms/homelab/protocol/openid-connect/userinfo
       client_id: grafana
-      # client_secret: ${KEYCLOAK_SECRET}
-      role_attribute_path: contains(roles[*], 'admin') && 'Admin' || contains(roles[*], 'editor') && 'Editor' || 'Viewer'
-  env:
-  - name: GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET
-    valueFrom:
-      secretKeyRef:
-        name: grafana-oauth
-        key: client-secret
+      client_secret: juejuejue
+      role_attribute_path: contains(roles[*], 'admin') && 'Admin' || contains(roles[*], 'editor') && 'Editor' || 'Viewer
+
   deploymentStrategy:
     type: RollingUpdate
     rollingUpdate:
@@ -1020,7 +1015,7 @@ grafana:
   ##
   defaultDashboardsEditable: true
 
-  adminPassword: jM3DYzn2we4Kk9HbaQru
+  adminPassword: ${GRAFANA_PASSWORD}
 
   rbac:
     ## If true, Grafana PSPs will be created
@@ -1076,6 +1071,7 @@ grafana:
     size: 10Gi
     finalizers:
       - kubernetes.io/pvc-protection
+
 
   serviceAccount:
     create: true
@@ -1227,7 +1223,7 @@ kubernetesServiceMonitors:
 ## Component scraping the kube api server
 ##
 kubeApiServer:
-  enabled: false
+  enabled: true
   tlsConfig:
     serverName: kubernetes
     insecureSkipVerify: false
@@ -1301,7 +1297,7 @@ kubeApiServer:
 ## Component scraping the kubelet and kubelet-hosted cAdvisor
 ##
 kubelet:
-  enabled: false
+  enabled: true
   namespace: kube-system
 
   serviceMonitor:
@@ -1507,7 +1503,7 @@ kubelet:
 ## Component scraping the kube controller manager
 ##
 kubeControllerManager:
-  enabled: false
+  enabled: true
 
   ## If your kube controller manager is not deployed as a pod, specify IPs it can be found on
   ##
@@ -1782,7 +1778,7 @@ kubeDns:
 ## Component scraping etcd
 ##
 kubeEtcd:
-  enabled: false
+  enabled: true
 
   ## If your etcd is not deployed as a pod, specify IPs it can be found on
   ##
@@ -2077,7 +2073,7 @@ kubeProxy:
 ## Component scraping kube state metrics
 ##
 kubeStateMetrics:
-  enabled: false
+  enabled: true
 
 ## Configuration for kube-state-metrics subchart
 ##
@@ -2151,7 +2147,7 @@ kube-state-metrics:
 ## Deploy node exporter as a daemonset to all nodes
 ##
 nodeExporter:
-  enabled: false
+  enabled: true
   operatingSystems:
     linux:
       enabled: true
@@ -2249,7 +2245,7 @@ prometheus-node-exporter:
 ## Manages Prometheus and Alertmanager components
 ##
 prometheusOperator:
-  enabled: false
+  enabled: true
 
   ## Use '{{ template "kube-prometheus-stack.fullname" . }}-operator' by default
   fullnameOverride: ""
@@ -3527,7 +3523,7 @@ prometheus:
 
     ## Exemplars related settings that are runtime reloadable.
     ## It requires to enable the exemplar storage feature to be effective.
-    exemplars: ""
+    exemplars: {}
       ## Maximum number of exemplars stored in memory for all series.
       ## If not set, Prometheus uses its default value.
       ## A value of zero or less than zero disables the storage.
@@ -3858,8 +3854,8 @@ prometheus:
         cpu: 100m
         memory: 128Mi
       limits:
-        cpu: 300m
-        memory: 256Mi
+        cpu: 1
+        memory: 512Mi
     # requests:
     #   memory: 400Mi
 
