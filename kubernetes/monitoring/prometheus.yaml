@@ -3754,12 +3754,15 @@ prometheus:
 
     ## Maximum size of metrics
     ##
-    retentionSize: ""
+    retentionSize: 2GB
 
     ## Allow out-of-order/out-of-bounds samples ingested into Prometheus for a specified duration
     ## See https://prometheus.io/docs/prometheus/latest/configuration/configuration/#tsdb
     tsdb:
       outOfOrderTimeWindow: 0s
+      maxBlockDuration: 2h
+      minBlockDuration: 2h
+      walCompression: true
 
     ## Enable compression of the write-ahead log using Snappy.
     ##
@@ -3855,7 +3858,7 @@ prometheus:
         memory: 128Mi
       limits:
         cpu: 2
-        memory: 1Gi
+        memory: 2Gi
     # requests:
     #   memory: 400Mi
 
