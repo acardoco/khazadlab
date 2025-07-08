@@ -16,7 +16,7 @@ kubectl create namespace cattle-system
 ```bash
 helm install rancher rancher-latest/rancher  \
   --namespace cattle-system   \
-  --set hostname=rancher.khazadlab.duckdns.org  \
+  --set hostname=rancher.khazadlab.es  \
   --set ingress.tls.source=letsEncrypt   \
   --set letsencrypt.email=andres.cardosoc12@gmail.com   \
   --set letsencrypt.ingress.class=traefik  \
@@ -46,3 +46,10 @@ EOF
 done
 ```
 
+# 7. Cambio de dominio
+```bash
+helm upgrade rancher rancher-latest/rancher \
+  --namespace cattle-system \
+  --reuse-values \
+  --set hostname=rancher.khazadlab.es
+```
