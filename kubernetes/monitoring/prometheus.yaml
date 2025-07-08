@@ -968,9 +968,9 @@ grafana:
       logs: /var/log/grafana
       plugins: /var/lib/grafana/plugins
     server:
-      root_url: https://grafana.khazadlab.duckdns.org
+      root_url: https://grafana.khazadlab.es
       serve_from_sub_path: true
-      domain: khazadlab.duckdns.org
+      domain: khazadlab.es
     auth.generic_oauth:
       enabled: true
       name: Keycloak
@@ -979,9 +979,9 @@ grafana:
       login_attribute_path: username
       email_attribute_path: email
       name_attribute_path: full_name
-      auth_url: https://keycloak.khazadlab.duckdns.org/realms/homelab/protocol/openid-connect/auth
-      token_url: https://keycloak.khazadlab.duckdns.org/realms/homelab/protocol/openid-connect/token
-      api_url: https://keycloak.khazadlab.duckdns.org/realms/homelab/protocol/openid-connect/userinfo
+      auth_url: https://keycloak.khazadlab.es/realms/homelab/protocol/openid-connect/auth
+      token_url: https://keycloak.khazadlab.es/realms/homelab/protocol/openid-connect/token
+      api_url: https://keycloak.khazadlab.es/realms/homelab/protocol/openid-connect/userinfo
       client_id: grafana
       client_secret: juejuejue
       role_attribute_path: contains(roles[*], 'admin') && 'Admin' || contains(roles[*], 'editor') && 'Editor' || 'Viewer
