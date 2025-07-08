@@ -69,7 +69,7 @@ kubectl -n nextcloud patch deployment nextcloud --patch '{
         "hostAliases": [
           {
             "ip": "10.43.253.81",
-            "hostnames": ["nextcloud.khazadlab.duckdns.org"]
+            "hostnames": ["nextcloud.khazadlab.es"]
           }
         ]
       }

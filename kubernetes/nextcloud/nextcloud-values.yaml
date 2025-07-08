@@ -74,7 +74,7 @@ phpClientHttpsFix:
   protocol: https
 
 nextcloud:
-  host: nextcloud.khazadlab.duckdns.org
+  host: nextcloud.khazadlab.es
   username: admin
   password: ${NEXTCLOUD_PASWORD}
   ## Use an existing secret
@@ -258,7 +258,7 @@ nextcloud:
   ## Extra environment variables
   extraEnv:
   - name: OIDC_DISCOVERY_URI
-    value: "https://keycloak.khazadlab.duckdns.org/realms/homelab/.well-known/openid-configuration"
+    value: "https://keycloak.khazadlab.es/realms/homelab/.well-known/openid-configuration"
   - name: OIDC_CLIENT_ID
     value: "nextcloud"
   - name: OIDC_CLIENT_SECRET
@@ -269,11 +269,11 @@ nextcloud:
   - name: OVERWRITEPROTOCOL
     value: https
   - name: OVERWRITEHOST
-    value: nextcloud.khazadlab.duckdns.org
+    value: nextcloud.khazadlab.es
   - name: OVERWRITEWEBROOT
     value: /
   - name: OVERWRITECLIURL
-    value: https://nextcloud.khazadlab.duckdns.org
+    value: https://nextcloud.khazadlab.es
   configs:
   002-openid-connect.config.php: |-
     <?php
@@ -305,10 +305,10 @@ nextcloud:
         $CONFIG = [];
     }
     $CONFIG = array_merge($CONFIG, [
-      'overwritehost'        => 'nextcloud.khazadlab.duckdns.org',
+      'overwritehost'        => 'nextcloud.khazadlab.es',
       'overwriteprotocol'    => 'https',
       'overwritewebroot'     => '/',
-      'overwrite.cli.url'    => 'https://nextcloud.khazadlab.duckdns.org',
+      'overwrite.cli.url'    => 'https://nextcloud.khazadlab.es',
       'trusted_proxies'      => ['10.42.0.0/16','10.43.0.0/16','10.43.203.42','10.42.0.1'],
       'forwarded_for_headers'=> ['HTTP_X_FORWARDED_FOR','HTTP_X_REAL_IP'],
       'forwarded_host_headers'=> ['HTTP_X_FORWARDED_HOST'],
