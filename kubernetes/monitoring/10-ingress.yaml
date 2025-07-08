@@ -4,14 +4,14 @@ metadata:
   name: ingress-grafana
   namespace: monitoring
   annotations:
-    cert-manager.io/cluster-issuer: letsencrypt
+    cert-manager.io/cluster-issuer: letsencrypt-dns
     nginx.ingress.kubernetes.io/proxy-connect-timeout: "30"
     nginx.ingress.kubernetes.io/proxy-read-timeout:    "1800"
     nginx.ingress.kubernetes.io/proxy-send-timeout:    "1800"
 spec:
   ingressClassName: traefik
   rules:
-    - host: grafana.khazadlab.duckdns.org
+    - host: grafana.khazadlab.es
       http:
         paths:
           - path: /
@@ -23,5 +23,5 @@ spec:
                   number: 80
   tls:
     - hosts:
-        - grafana.khazadlab.duckdns.org
-      secretName: tls-ingress-grafana
+        - grafana.khazadlab.es
+      secretName: tls-grafana-khazadlab
