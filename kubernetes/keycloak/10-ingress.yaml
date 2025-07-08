@@ -4,7 +4,7 @@ metadata:
   name: keycloak
   namespace: keycloak
   annotations:
-    cert-manager.io/cluster-issuer: letsencrypt
+    cert-manager.io/cluster-issuer: letsencrypt-dns
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     nginx.ingress.kubernetes.io/proxy-connect-timeout: "30"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "1800"
@@ -12,7 +12,7 @@ metadata:
 spec:
   ingressClassName: traefik
   rules:
-  - host: keycloak.khazadlab.duckdns.org
+  - host: keycloak.khazadlab.es
     http:
       paths:
       - path: /
@@ -24,5 +24,5 @@ spec:
               number: 80
   tls:
   - hosts:
-    - keycloak.khazadlab.duckdns.org
-    secretName: tls-keycloak-ingress
+    - keycloak.khazadlab.es
+    secretName: tls-keycloak-khazadlab
