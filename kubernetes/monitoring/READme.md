@@ -15,3 +15,15 @@ helm upgrade --install prometheus prometheus-community/kube-prometheus-stack \
   --set-string grafana.adminPassword="$GRAFANA_PASSWORD" \
   -f prometheus.yaml
 ```
+
+## NOTA
+Hay que abrir el puerto 9100
+```bash
+sudo ufw allow 9100/tcp
+sudo ufw reload
+```
+
+Comprobar que esta UP:
+```bash
+ss -tlnp | grep 9100
+```
