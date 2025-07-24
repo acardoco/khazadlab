@@ -1,17 +1,20 @@
 FROM cm2network/steamcmd:latest
 
+# Copiamos el script de arranque como root
 USER root
 WORKDIR /home/steam
 
-# 2. Descarga el servidor dedicado (Windows)
-RUN steamcmd +login anonymous \
-    +force_install_dir /home/steam/dm_srv \
-    +app_update 2145 validate \
-    +quit
+# Descarga el servidor dedicado Windows para Dark Messiah
+RUN /home/steam/steamcmd/steamcmd.sh \
+      +@sSteamCmdForcePlatformType windows \
+      +login anonymous \
+      +force_install_dir /home/steam/dm_srv \
+      +app_update 2145 validate \
+      +quit
 
-# 3. Copia el script de arranque, asignándolo al usuario steam
+# Copiamos start.sh y se lo damos al usuario steam
 COPY --chown=steam:steam start.sh .
 
-# 4. Volvemos a steam useer
+# Cambiamos al usuario steam y lanzamos
 USER steam
 ENTRYPOINT ["bash", "start.sh"]
