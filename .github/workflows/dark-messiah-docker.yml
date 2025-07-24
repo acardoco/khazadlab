@@ -3,6 +3,7 @@ name: Build & Publish Dark Messiah Server
 on:
   push:
     paths:
+      - '.github/workflows/dark-messiah-docker.yml'
       - 'kubernetes/dedicated-servers/darkMessiah/DockerFile'
       - 'kubernetes/dedicated-servers/darkMessiah/start.sh'
 
