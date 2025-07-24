@@ -1,8 +1,6 @@
 FROM cm2network/steamcmd:latest
 
-# 1. Crea el usuario "steam" y directorios
-RUN useradd -m steam
-USER steam
+USER root
 WORKDIR /home/steam
 
 # 2. Descarga el servidor dedicado (Windows)
@@ -11,7 +9,9 @@ RUN steamcmd +login anonymous \
     +app_update 2145 validate \
     +quit
 
-# 3. Copia el script de arranque
+# 3. Copia el script de arranque, asignándolo al usuario steam
 COPY --chown=steam:steam start.sh .
 
+# 4. Volvemos a steam useer
+USER steam
 ENTRYPOINT ["bash", "start.sh"]
