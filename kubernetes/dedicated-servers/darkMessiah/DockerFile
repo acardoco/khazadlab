@@ -1,19 +1,15 @@
 FROM cm2network/steamcmd:latest
 
+# Trabajamos como root para copiar scripts y configuraciones
 USER root
 WORKDIR /home/steam
 
-# 1. Descarga servidor dedicado
-RUN /home/steam/steamcmd/steamcmd.sh \
-    +@sSteamCmdForcePlatformType windows \
-    +force_install_dir /home/steam/dm_srv \
-    +login TU_STEAM_USERNAME TU_STEAM_PASSWORD \
-    +app_update 2145 validate \
-    +quit
-
-# 2. Copia el script de arranque
+# Copiamos el script de arranque y marcamos permisos
 COPY --chown=steam:steam start.sh .
+RUN chmod +x start.sh
 
-# 3. Ejecuta como steam
+# Volvemos al usuario steam para seguridad
 USER steam
-ENTRYPOINT ["bash", "start.sh"]
+
+# El ENTRYPOINT lanza start.sh en tiempo de ejecución
+ENTRYPOINT ["./start.sh"]

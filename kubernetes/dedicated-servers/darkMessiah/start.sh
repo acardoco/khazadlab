@@ -1,17 +1,28 @@
-#!/bin/bash
-# Inicia un framebuffer virtual
-Xvfb :0 -screen 0 1024x768x16 &
+#!/usr/bin/env bash
+set -e
 
-# Variables por defecto (puedes pasarlas como env vars)
-: "${PORT:=27015}"
-: "${MAXPLAYERS:=16}"
-: "${MAP:=arena_big}"
+# Validar que existan credenciales
+if [ -z "$STEAM_USER" ] || [ -z "$STEAM_PASS" ]; then
+  echo "ERROR: Debes definir STEAM_USER y STEAM_PASS como variables de entorno"
+  exit 1
+fi
 
-cd /home/steam/dm_srv
+# Directorio de instalación
+INSTALL_DIR="/home/steam/dm_srv"
 
-# Ejecuta srcds.exe bajo Wine
+# Solo descargar si no existe ya el servidor
+if [ ! -d "$INSTALL_DIR" ]; then
+  echo "Descargando Dark Messiah Dedicated Server..."
+  steamcmd +@sSteamCmdForcePlatformType windows \
+           +force_install_dir "$INSTALL_DIR" \
+           +login "$STEAM_USER" "$STEAM_PASS" \
+           +app_update 2145 validate \
+           +quit
+fi
+
+# Lanzar el servidor bajo Wine
 exec wine cmd /c "srcds.exe -game dmom \
- +port ${PORT} \
- +maxplayers ${MAXPLAYERS} \
- +map ${MAP} \
- +exec server.cfg"
+  +port ${PORT:-27015} \
+  +maxplayers ${MAXPLAYERS:-16} \
+  +map ${MAP:-arena_big} \
+  +exec server.cfg"
