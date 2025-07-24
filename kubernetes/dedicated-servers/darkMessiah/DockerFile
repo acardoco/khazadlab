@@ -1,0 +1,33 @@
+# Dockerfile
+FROM ubuntu:22.04
+
+# 1. Instala dependencias y Wine
+RUN dpkg --add-architecture i386 \
+ && apt-get update \
+ && apt-get install -y --no-install-recommends \
+      wine64 wine32 \
+      wget unzip xvfb \
+      lib32gcc-s1 lib32stdc++6 \
+ && rm -rf /var/lib/apt/lists/*
+
+# 2. Crea usuario y directorios
+RUN useradd -m steam
+USER steam
+WORKDIR /home/steam
+
+# 3. Instala SteamCMD
+RUN mkdir steamcmd \
+ && cd steamcmd \
+ && wget -qO- https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz \
+    | tar zxvf - \
+ && cd ..
+
+# 4. Descarga el servidor dedicado (Windows) vía SteamCMD
+RUN ./steamcmd/steamcmd.sh +login anonymous \
+    +force_install_dir /home/steam/dm_srv \
+    +app_update 2145 validate +quit
+
+# 5. Copia el script de arranque
+COPY --chown=steam:steam start.sh .
+
+ENTRYPOINT ["bash", "start.sh"]
