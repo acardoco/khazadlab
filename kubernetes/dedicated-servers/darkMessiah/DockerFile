@@ -16,12 +16,13 @@ USER steam
 WORKDIR /home/steam
 
 # 3. Instala SteamCMD
-RUN mkdir steamcmd \
+RUN mkdir -p steamcmd \
  && cd steamcmd \
- && wget -qO- https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz \
-    | tar zxvf - \
+ && wget -q https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz \
+    -O steamcmd_linux.tar.gz \
+ && tar -xzf steamcmd_linux.tar.gz \
+ && rm steamcmd_linux.tar.gz \
  && cd ..
-
 # 4. Descarga el servidor dedicado (Windows) vía SteamCMD
 RUN ./steamcmd/steamcmd.sh +login anonymous \
     +force_install_dir /home/steam/dm_srv \
