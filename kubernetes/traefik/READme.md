@@ -32,3 +32,10 @@
     }"
     ```
 - TODO --> prefiero hacerlo con YAMLS
+
+## Notas adicionales
+
+Instalé algunos CRDs de containo
+```
+kubectl apply -f https://raw.githubusercontent.com/traefik/traefik/v2.10/docs/content/reference/dynamic-configuration/kubernetes-crd-definition-v1.yml
+```
