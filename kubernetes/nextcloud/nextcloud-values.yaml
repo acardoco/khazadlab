@@ -180,7 +180,13 @@ nextcloud:
 
   ## PHP Configuration files
   # Will be injected in /usr/local/etc/php/conf.d for apache image and in /usr/local/etc/php-fpm.d when nginx.enabled: true
-  phpConfigs: {}
+  phpConfigs:
+    zz-upload.ini: |-
+      upload_max_filesize=5G
+      post_max_size=5G
+      memory_limit=512M
+      max_execution_time=3600
+      max_input_time=3600
   ## Default config files that utilize environment variables:
   # see: https://github.com/nextcloud/docker/tree/master#auto-configuration-via-environment-variables
   # IMPORTANT: Will be used only if you put extra configs, otherwise default will come from nextcloud itself
@@ -316,6 +322,7 @@ nextcloud:
       'memcache.local'       => '\\OC\\Memcache\\APCu',
       'memcache.distributed' => '\\OC\\Memcache\\Redis',
       'memcache.locking'     => '\\OC\\Memcache\\Redis',
+      'upload_max_chunk_size' => 104857600, // 100 MiB
       'redis' => [
         'host'     => 'nextcloud-redis',
         'port'     => 6379,
