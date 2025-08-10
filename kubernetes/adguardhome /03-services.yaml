@@ -1,0 +1,26 @@
+# DNS for LAN, exposed by MetalLB
+apiVersion: v1
+kind: Service
+metadata:
+  name: adguard-dns
+  namespace: adguard
+spec:
+  type: LoadBalancer
+  loadBalancerIP: 192.168.1.240    # pool de MetalLB
+  externalTrafficPolicy: Local      # preserva IP del cliente
+  selector: { app: adguardhome }
+  ports:
+  - { name: dns-udp, port: 53, targetPort: 53, protocol: UDP }
+  - { name: dns-tcp, port: 53, targetPort: 53, protocol: TCP }
+---
+# Internal UI (ClusterIP) behind Traefik
+apiVersion: v1
+kind: Service
+metadata:
+  name: adguard-ui
+  namespace: adguard
+spec:
+  type: ClusterIP
+  selector: { app: adguardhome }
+  ports:
+  - { name: http, port: 3000, targetPort: 3000 }

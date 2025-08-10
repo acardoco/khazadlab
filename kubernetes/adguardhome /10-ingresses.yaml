@@ -1,0 +1,40 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: adguard-ui
+  namespace: adguard
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    # Opcional: protege la UI (IP allowlist, BasicAuth, etc.)
+spec:
+  tls:
+  - hosts: [adguard.khazadlab.es]
+    secretName: adguard-tls
+  rules:
+  - host: adguard.khazadlab.es
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service: { name: adguard-ui, port: { number: 3000 } }
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: adguard-doh
+  namespace: adguard
+  annotations:
+    kubernetes.io/ingress.class: traefik
+spec:
+  tls:
+  - hosts: [doh.khazadlab.es]
+    secretName: adguard-doh-tls
+  rules:
+  - host: doh.khazadlab.es
+    http:
+      paths:
+      - path: /dns-query
+        pathType: Prefix
+        backend:
+          service: { name: adguard-ui, port: { number: 3000 } }
