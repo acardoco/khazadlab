@@ -4,7 +4,7 @@ metadata:
   name: adguard-ui
   namespace: adguard
   annotations:
-    kubernetes.io/ingress.class: traefik
+    cert-manager.io/cluster-issuer: letsencrypt-dns
     # Opcional: protege la UI (IP allowlist, BasicAuth, etc.)
 spec:
   tls:
@@ -25,7 +25,8 @@ metadata:
   name: adguard-doh
   namespace: adguard
   annotations:
-    kubernetes.io/ingress.class: traefik
+    cert-manager.io/cluster-issuer: letsencrypt-dns
+    traefik.ingress.kubernetes.io/service.serversscheme: h2c  # <-- backend h2c
 spec:
   tls:
   - hosts: [doh.khazadlab.es]

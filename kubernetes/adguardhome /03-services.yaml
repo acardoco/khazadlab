@@ -6,7 +6,7 @@ metadata:
   namespace: adguard
 spec:
   type: LoadBalancer
-  loadBalancerIP: 192.168.1.240    # pool de MetalLB
+  loadBalancerIP: 192.168.1.245    # pool de MetalLB, fijarse que no este pillada (mirar logs de metallb)
   externalTrafficPolicy: Local      # preserva IP del cliente
   selector: { app: adguardhome }
   ports:
