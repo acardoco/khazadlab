@@ -1,6 +1,6 @@
 ## Pasos instalacion de AdGuardHome: MetalLB + Load Balancer
 
-Opto por usar metalLB y loadBalancer para evitar tocar demasiado las configuraciones a nivel de nodo -> el host lo gestiona el pod, no el nodo (por eso no activo hostNetwork a true)
+Opto por usar metalLB y loadBalancer para evitar tocar demasiado las configuraciones a nivel de nodo -> el host lo gestiona solo kubernetes (el pod para ser más exactos, con la virtualIP que le da metalLB), no el nodo (por eso no activo hostNetwork a true)
 
 ### Instalacion MetalLB
 ```bash
