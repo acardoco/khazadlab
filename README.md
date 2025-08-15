@@ -20,6 +20,7 @@ Welcome to my homelab! Everything runs on **Kubernetes k3s**, with services mana
 
 Also, I’ve configured my DIGI router accordingly and set up a domain.
 
+![Architecture](architecture_plot.png) Architecture so far
 
 ### Initial setup 
 
