@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-immich
+  namespace: immich
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-dns
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "30"
+    nginx.ingress.kubernetes.io/proxy-read-timeout:    "1800"
+    nginx.ingress.kubernetes.io/proxy-send-timeout:    "1800"
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: immich.khazadlab.es
+      http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: immich-svc
+                port:
+                  number: 80
+  tls:
+    - hosts:
+        - immich.khazadlab.es
+      secretName: tls-immich-khazadlab
