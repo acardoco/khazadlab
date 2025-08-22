@@ -27,6 +27,13 @@ kubectl apply -f 0-pvc.yaml
 
 #### Instalar el propio Immich
 
+helm upgrade --install immich immich/immich \
+  -n immich -f values.yaml
 
 **NOTA
 El tipo nuevo de CloudNativePG se busca en k8s con clusters.postgresql.cnpg.io
+
+**NOTA 2
+
+Si da errores de permisos de postgresql en el pod del server, ejecutar a mano la instalacion de extensiones en el pod del postgresql
+psql -U postgres -d immich -c "CREATE EXTENSION IF NOT EXISTS ..."

@@ -18,9 +18,9 @@ spec:
             pathType: ImplementationSpecific
             backend:
               service:
-                name: immich-svc
+                name: immich-server
                 port:
-                  number: 80
+                  number: 2283
   tls:
     - hosts:
         - immich.khazadlab.es

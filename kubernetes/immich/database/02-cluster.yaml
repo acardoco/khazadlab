@@ -5,6 +5,13 @@ metadata:
   namespace: immich
 spec:
   instances: 1
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "400Mi"
+    limits:
+      cpu: "1"
+      memory: "1Gi"
 
   # Imagen de Postgres mantenida por Immich con VectorChord + pgvector
   # Elige una tag compatible (>=0.3,<0.5). Ejemplo estable:
@@ -25,12 +32,14 @@ spec:
       secret:
         name: immich-db-auth
       postInitSQL:
+        - CREATE EXTENSION IF NOT EXISTS vector;
         - CREATE EXTENSION IF NOT EXISTS vchord CASCADE;
+        # - CREATE EXTENSION IF NOT EXISTS cube;
+        - CREATE EXTENSION IF NOT EXISTS earthdistance CASCADE;
 
 
   postgresql:
-    shared_preload_libraries:
-      - "vchord"          # si quieres, "vchord.so", pero sin .so suele ser lo estándar
+    shared_preload_libraries: [vchord]
     parameters:
       # aquí puedes dejar otros parámetros no “fijos”, si tienes (work_mem, etc.)
       # work_mem: "64MB"

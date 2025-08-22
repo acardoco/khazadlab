@@ -6,10 +6,11 @@
 
 env:
   TZ: Europe/Madrid
-  REDIS_HOSTNAME: '{{ printf "%s-redis-master" .Release.Name }}'
-  DB_HOSTNAME: 5432
-  DB_USERNAME: "immich"
-  DB_DATABASE_NAME: "immich_db"
+  
+  DB_HOSTNAME: immich-pg-rw.immich.svc.cluster.local
+  DB_PORT: 5432
+  DB_USERNAME: immich
+  DB_DATABASE_NAME: immich
   # -- You should provide your own secret outside of this helm-chart and use `postgresql.global.postgresql.auth.existingSecret` to provide credentials to the postgresql instance
   DB_PASSWORD:
     valueFrom:
@@ -18,8 +19,11 @@ env:
         key: password
   IMMICH_MACHINE_LEARNING_URL: '{{ printf "http://%s-machine-learning:3003" .Release.Name }}'
 
+  REDIS_HOSTNAME: "immich-redis-master.immich.svc.cluster.local"
+  REDIS_PORT: 6379
+
 image:
-  tag: v1.119.0
+  tag: v1.138.1
 
 immich:
   metrics:
@@ -79,6 +83,13 @@ redis:
       enabled: true
       size: 1Gi
       storageClass: longhorn
+    resources:
+      requests:
+        cpu: "50m"
+        memory: "64Mi"
+      limits:
+        cpu: "250m"
+        memory: "256Mi"
 
 # Immich components
 
@@ -98,9 +109,16 @@ server:
           paths:
             - path: "/"
       tls: []
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "512Mi"
+    limits:
+      cpu: "2"
+      memory: "2Gi"
 
 machine-learning:
-  enabled: true
+  enabled: false
   image:
     repository: ghcr.io/immich-app/immich-machine-learning
     pullPolicy: IfNotPresent
