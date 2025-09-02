@@ -118,7 +118,7 @@ server:
       memory: "2Gi"
 
 machine-learning:
-  enabled: false
+  enabled: true
   image:
     repository: ghcr.io/immich-app/immich-machine-learning
     pullPolicy: IfNotPresent
@@ -131,5 +131,5 @@ machine-learning:
       # Optional: Set this to pvc to avoid downloading the ML models every start.
       type: emptyDir
       accessMode: ReadWriteMany
-      # storageClass: your-class
+      storageClass: local-path
 
