@@ -39,7 +39,7 @@ export DEBIAN_FRONTEND=noninteractive
 apt-get update -y
 apt-get install -y curl open-iscsi nfs-common util-linux ufw
 
-echo "==> (opcional) Desactiva IPv6 como hiciste"
+echo "==> (opcional) Desactiva IPv6"
 if [[ "${DISABLE_IPV6:-true}" == "true" ]]; then
   cat >/etc/sysctl.d/98-disable-ipv6.conf <<'EOF'
 net.ipv6.conf.all.disable_ipv6 = 1
@@ -49,7 +49,7 @@ EOF
   sysctl --system || true
 fi
 
-echo "==> UFW (mismas reglas que usaste)"
+echo "==> UFW ports"
 if [[ "${ENABLE_UFW:-true}" == "true" ]]; then
   ufw allow 6443/tcp || true
   ufw allow 10250/tcp || true
