@@ -1,0 +1,24 @@
+# plex-pvc-longhorn.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: plex-config
+  namespace: media
+spec:
+  accessModes: [ ReadWriteOnce ]
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 10Gi  # config de Plex
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: plex-transcode
+  namespace: media
+spec:
+  accessModes: [ ReadWriteOnce ]
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 10Gi
