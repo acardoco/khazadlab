@@ -53,7 +53,10 @@ spec:
             - name: PLEX_GID
               value: "1000"      # tu GID en el host
             - name: PLEX_CLAIM
-              value: "claim-XXXXXXXX"  # opcional, caduca rápido
+              valueFrom:
+                secretKeyRef:
+                  name: plex-claim
+                  key: PLEX_CLAIM
             - name: ADVERTISE_IP
               value: "http://192.168.1.50:32400/,https://plex.tudominio.tld"
           volumeMounts:
@@ -78,7 +81,7 @@ spec:
             claimName: plex-config
         - name: media
           hostPath:
-            path: /mnt/media       # tu carpeta de medios en el worker
+            path: /mnt/media 
         - name: transcode
           persistentVolumeClaim:
             claimName: plex-transcode
