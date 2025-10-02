@@ -204,3 +204,53 @@ helm upgrade nextcloud nextcloud/nextcloud \
   -f /tmp/nextcloud-upgrade-fix.yaml \
   --atomic --timeout 15m
 ```
+
+## NOTA si, despues del upgrade, se queda en modo maintenance:
+
+Hacer esto:
+
+```bash
+╭─andre@/mnt/c/Users/andre/OneDrive/Documentos/homelab/khazadlab/kubernetes/nextcloud
+╰─% kubectl exec -n nextcloud deploy/nextcloud -- php occ status
+Defaulted container "nextcloud" out of: nextcloud, postgresql-isready (init)
+Nextcloud or one of the apps require upgrade - only a limited number of commands are available
+You may use your browser or the occ upgrade command to do the upgrade
+  - installed: true
+  - version: 31.0.9.1
+  - versionstring: 31.0.9
+  - edition: 
+  - maintenance: true
+  - needsDbUpgrade: true
+  - productname: Nextcloud
+  - extendedSupport: false
+╭─andre@/mnt/c/Users/andre/OneDrive/Documentos/homelab/khazadlab/kubernetes/nextcloud
+╰─% kubectl exec -n nextcloud deploy/nextcloud -- php occ upgrade --no-interaction
+Defaulted container "nextcloud" out of: nextcloud, postgresql-isready (init)
+Nextcloud or one of the apps require upgrade - only a limited number of commands are available
+You may use your browser or the occ upgrade command to do the upgrade
+Setting log level to debug
+Updating database schema
+Updated database
+Update app richdocumentscode from App Store
+Update app user_oidc from App Store
+Starting code integrity check...
+Finished code integrity check
+Update successful
+Maintenance mode is kept active
+Resetting log level
+╭─andre@/mnt/c/Users/andre/OneDrive/Documentos/homelab/khazadlab/kubernetes/nextcloud
+╰─% kubectl exec -n nextcloud deploy/nextcloud -- php occ maintenance:mode --off
+Defaulted container "nextcloud" out of: nextcloud, postgresql-isready (init)
+Maintenance mode disabled
+╭─andre@/mnt/c/Users/andre/OneDrive/Documentos/homelab/khazadlab/kubernetes/nextcloud
+╰─% kubectl exec -n nextcloud deploy/nextcloud -- php occ status                  
+Defaulted container "nextcloud" out of: nextcloud, postgresql-isready (init)
+  - installed: true
+  - version: 31.0.9.1
+  - versionstring: 31.0.9
+  - edition: 
+  - maintenance: false
+  - needsDbUpgrade: false
+  - productname: Nextcloud
+  - extendedSupport: false
+```
