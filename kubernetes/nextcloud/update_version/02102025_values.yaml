@@ -1,0 +1,448 @@
+affinity: {}
+collabora:
+  autoscaling:
+    enabled: false
+  collabora:
+    aliasgroups: []
+    existingSecret:
+      enabled: false
+      passwordKey: password
+      secretName: ""
+      usernameKey: username
+    extra_params: --o:ssl.enable=false
+    password: examplepass
+    server_name: null
+    username: admin
+  enabled: false
+  ingress:
+    annotations: {}
+    className: ""
+    enabled: false
+    hosts:
+    - host: chart-example.local
+      paths:
+      - path: /
+        pathType: ImplementationSpecific
+    tls: []
+  resources: {}
+cronjob:
+  command:
+  - /cron.sh
+  enabled: false
+  lifecycle: {}
+  resources: {}
+  securityContext: {}
+deploymentAnnotations: {}
+deploymentLabels: {}
+dnsConfig: {}
+externalDatabase:
+  database: nextcloud
+  enabled: true
+  existingSecret:
+    enabled: false
+    passwordKey: db-password
+    usernameKey: db-username
+  host: nextcloud-postgresql
+  password: postgresqlNextcloud!.Pass
+  type: postgresql
+  user: nextcloud
+fullnameOverride: ""
+hpa:
+  cputhreshold: 60
+  enabled: false
+  maxPods: 10
+  minPods: 1
+image:
+  flavor: apache
+  pullPolicy: IfNotPresent
+  repository: nextcloud
+  tag: null
+imaginary:
+  enabled: false
+  image:
+    pullPolicy: IfNotPresent
+    pullSecrets: []
+    registry: docker.io
+    repository: h2non/imaginary
+    tag: 1.2.4
+  livenessProbe:
+    enabled: true
+    failureThreshold: 3
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 1
+  nodeSelector: {}
+  podAnnotations: {}
+  podLabels: {}
+  podSecurityContext: {}
+  readinessProbe:
+    enabled: true
+    failureThreshold: 3
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 1
+  replicaCount: 1
+  resources: {}
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+  service:
+    annotations: {}
+    labels: {}
+    loadBalancerIP: null
+    nodePort: null
+    type: ClusterIP
+  tolerations: []
+ingress:
+  annotations: {}
+  enabled: false
+  labels: {}
+  path: /
+  pathType: Prefix
+internalDatabase:
+  enabled: false
+  name: nextcloud
+lifecycle: {}
+livenessProbe:
+  enabled: true
+  failureThreshold: 3
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  successThreshold: 1
+  timeoutSeconds: 5
+mariadb:
+  architecture: standalone
+  auth:
+    database: nextcloud
+    existingSecret: ""
+    password: changeme
+    username: nextcloud
+  enabled: false
+  global:
+    defaultStorageClass: ""
+  primary:
+    persistence:
+      accessMode: ReadWriteOnce
+      enabled: false
+      existingClaim: ""
+      size: 8Gi
+      storageClass: ""
+metrics:
+  affinity: {}
+  enabled: false
+  https: false
+  image:
+    pullPolicy: IfNotPresent
+    repository: xperimental/nextcloud-exporter
+    tag: 0.6.2
+  info:
+    apps: false
+  nodeSelector: {}
+  podAnnotations: {}
+  podLabels: {}
+  podSecurityContext: {}
+  replicaCount: 1
+  resources: {}
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 1000
+  server: ""
+  service:
+    annotations:
+      prometheus.io/port: "9205"
+      prometheus.io/scrape: "true"
+    labels: {}
+    loadBalancerIP: null
+    type: ClusterIP
+  serviceMonitor:
+    enabled: false
+    interval: 30s
+    jobLabel: ""
+    labels: {}
+    namespace: ""
+    namespaceSelector: null
+    scrapeTimeout: ""
+  timeout: 5s
+  tlsSkipVerify: false
+  token: ""
+  tolerations: []
+nameOverride: ""
+nextcloud:
+  002-openid-connect.config.php: |-
+    <?php
+    if (!isset($CONFIG) || !is_array($CONFIG)) {
+      $CONFIG = [];
+    }
+    if (class_exists('\OC_User_OpenIDConnect')) {
+      $CONFIG = array_merge($CONFIG, [
+        'openid_connect_auto_redirect' => true,
+        'openid_connect_debug'         => true,
+        'openid_connect_providers' => [
+          'keycloak' => [
+            'identifier'   => 'keycloak',
+            'discoveryUri' => getenv('OIDC_DISCOVERY_URI'),
+            'clientId'     => getenv('OIDC_CLIENT_ID'),
+            'clientSecret' => getenv('OIDC_CLIENT_SECRET'),
+            'scope'        => 'openid profile email',
+          ],
+        ],
+        'user_backends' => [
+          ['class'=>'OC_User_OpenIDConnect','arguments'=>['keycloak']],
+        ],
+      ]);
+    }
+  003-reverse-proxy.config.php: |-
+    <?php
+    if (!isset($CONFIG) || !is_array($CONFIG)) {
+        $CONFIG = [];
+    }
+    $CONFIG = array_merge($CONFIG, [
+      'overwritehost'        => 'nextcloud.khazadlab.es',
+      'overwriteprotocol'    => 'https',
+      'overwritewebroot'     => '/',
+      'overwrite.cli.url'    => 'https://nextcloud.khazadlab.es',
+      'trusted_proxies'      => ['10.42.0.0/16','10.43.0.0/16','10.43.203.42','10.42.0.1'],
+      'forwarded_for_headers'=> ['HTTP_X_FORWARDED_FOR','HTTP_X_REAL_IP'],
+      'forwarded_host_headers'=> ['HTTP_X_FORWARDED_HOST'],
+      'forwarded_proto_headers'=> ['HTTP_X_FORWARDED_PROTO'],
+      'memcache.local'       => '\\OC\\Memcache\\APCu',
+      'memcache.distributed' => '\\OC\\Memcache\\Redis',
+      'memcache.locking'     => '\\OC\\Memcache\\Redis',
+      'upload_max_chunk_size' => 104857600, // 100 MiB
+      'redis' => [
+        'host'     => 'nextcloud-redis',
+        'port'     => 6379,
+        'timeout'  => 0.0,
+        'password' => '',
+      ],
+    ]);
+  configs: null
+  containerPort: 80
+  datadir: /var/www/html/data
+  defaultConfigs:
+    .htaccess: true
+    apache-pretty-urls.config.php: true
+    apcu.config.php: true
+    apps.config.php: true
+    autoconfig.php: true
+    imaginary.config.php: false
+    redis.config.php: true
+    reverse-proxy.config.php: true
+    s3.config.php: true
+    smtp.config.php: true
+    swift.config.php: true
+    upgrade-disable-web.config.php: true
+  existingSecret:
+    enabled: false
+    passwordKey: nextcloud-password
+    smtpHostKey: smtp-host
+    smtpPasswordKey: smtp-password
+    smtpUsernameKey: smtp-username
+    tokenKey: ""
+    usernameKey: nextcloud-username
+  extraEnv:
+  - name: OIDC_DISCOVERY_URI
+    value: https://keycloak.khazadlab.es/realms/homelab/.well-known/openid-configuration
+  - name: OIDC_CLIENT_ID
+    value: nextcloud
+  - name: OIDC_CLIENT_SECRET
+    valueFrom:
+      secretKeyRef:
+        key: client-secret
+        name: nextcloud-keycloak-secret
+  - name: OVERWRITEPROTOCOL
+    value: https
+  - name: OVERWRITEHOST
+    value: nextcloud.khazadlab.es
+  - name: OVERWRITEWEBROOT
+    value: /
+  - name: OVERWRITECLIURL
+    value: https://nextcloud.khazadlab.es
+  extraInitContainers: []
+  extraSidecarContainers: []
+  extraVolumeMounts: null
+  extraVolumes: null
+  hooks:
+    before-starting: null
+    post-installation: null
+    post-upgrade: null
+    pre-installation: null
+    pre-upgrade: null
+  host: nextcloud.khazadlab.es
+  mail:
+    domain: domain.com
+    enabled: false
+    fromAddress: user
+    smtp:
+      authtype: LOGIN
+      host: domain.com
+      name: user
+      password: pass
+      port: 465
+      secure: ssl
+  mariaDbInitContainer:
+    resources: {}
+    securityContext: {}
+  objectStore:
+    s3:
+      accessKey: ""
+      autoCreate: false
+      bucket: ""
+      enabled: false
+      existingSecret: ""
+      host: ""
+      legacyAuth: false
+      port: "443"
+      prefix: ""
+      region: eu-west-1
+      secretKey: ""
+      secretKeys:
+        accessKey: ""
+        bucket: ""
+        host: ""
+        secretKey: ""
+        sse_c_key: ""
+      sse_c_key: ""
+      ssl: true
+      storageClass: STANDARD
+      usePathStyle: false
+    swift:
+      autoCreate: false
+      container: ""
+      enabled: false
+      project:
+        domain: Default
+        name: ""
+      region: ""
+      service: swift
+      url: ""
+      user:
+        domain: Default
+        name: ""
+        password: ""
+  password: ${NEXTCLOUD_PASWORD}
+  persistence:
+    subPath: null
+  phpConfigs:
+    zz-upload.ini: |-
+      upload_max_filesize=5G
+      post_max_size=5G
+      memory_limit=512M
+      max_execution_time=3600
+      max_input_time=3600
+  podSecurityContext: {}
+  postgreSqlInitContainer:
+    resources: {}
+    securityContext: {}
+  securityContext: {}
+  strategy:
+    type: Recreate
+  trustedDomains: []
+  update: 0
+  username: admin
+nextcloud-password: admin!.Khazadlab
+nginx:
+  config:
+    custom: null
+    default: true
+    headers:
+      Referrer-Policy: no-referrer
+      Strict-Transport-Security: ""
+      X-Content-Type-Options: nosniff
+      X-Download-Options: noopen
+      X-Frame-Options: SAMEORIGIN
+      X-Permitted-Cross-Domain-Policies: none
+      X-Robots-Tag: noindex, nofollow
+      X-XSS-Protection: 1; mode=block
+  containerPort: 80
+  enabled: false
+  extraEnv: []
+  image:
+    pullPolicy: IfNotPresent
+    repository: nginx
+    tag: alpine
+  ipFamilies:
+  - IPv4
+  resources: {}
+  securityContext: {}
+nodeSelector: {}
+persistence:
+  accessMode: ReadWriteOnce
+  annotations: {}
+  enabled: true
+  nextcloudData:
+    accessMode: ReadWriteOnce
+    annotations: {}
+    enabled: false
+    size: 8Gi
+    subPath: null
+  size: 80Gi
+  storageClass: longhorn
+phpClientHttpsFix:
+  enabled: false
+  protocol: https
+podAnnotations: {}
+postgresql:
+  enabled: true
+  global:
+    postgresql:
+      auth:
+        database: nextcloud
+        existingSecret: ""
+        password: postgresqlNextcloud!.Pass
+        secretKeys:
+          adminPasswordKey: ""
+          replicationPasswordKey: ""
+          userPasswordKey: ""
+        username: nextcloud
+  primary:
+    persistence:
+      accessMode: ReadWriteOnce
+      enabled: true
+      size: 8Gi
+      storageClass: longhorn
+rbac:
+  enabled: false
+  serviceaccount:
+    annotations: {}
+    create: true
+    name: nextcloud-serviceaccount
+readinessProbe:
+  enabled: true
+  failureThreshold: 3
+  initialDelaySeconds: 10
+  periodSeconds: 10
+  successThreshold: 1
+  timeoutSeconds: 5
+redis:
+  auth:
+    enabled: true
+    existingSecret: ""
+    existingSecretPasswordKey: ""
+    password: dwarf.Khazadlab
+  enabled: true
+  global:
+    storageClass: ""
+  master:
+    persistence:
+      enabled: true
+  replica:
+    persistence:
+      enabled: true
+replicaCount: 1
+resources: {}
+securityContext: {}
+service:
+  annotations: {}
+  loadBalancerIP: ""
+  nodePort: null
+  port: 8080
+  type: ClusterIP
+startupProbe:
+  enabled: false
+  failureThreshold: 30
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  successThreshold: 1
+  timeoutSeconds: 5
+tolerations: []

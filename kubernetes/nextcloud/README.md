@@ -112,3 +112,32 @@ configs:
       ],
     ]);
 ```
+
+# Upgrade de version
+
+Testearlo primero
+
+```bash
+helm repo update
+helm upgrade nextcloud nextcloud/nextcloud \
+  -n nextcloud \
+  --version 8.0.3 \
+  --reuse-values \
+  --set externalDatabase.enabled=false \
+  --set metrics.enabled=false \
+  --set metrics.rules.enabled=false \
+  --dry-run --debug
+```
+
+Y subirlo
+
+```bash
+helm upgrade nextcloud nextcloud/nextcloud \
+  -n nextcloud \
+  --version 8.0.3 \
+  --reuse-values \
+  --set externalDatabase.enabled=false \
+  --set metrics.enabled=false \
+  --set metrics.rules.enabled=false \
+  --atomic --timeout 10m
+```
