@@ -7,3 +7,6 @@ spec:
   buffering:
     maxRequestBodyBytes: 5368709120
     memRequestBodyBytes: 104857600
+    maxResponseBodyBytes: 0           # 0 = ilimitado
+    memResponseBodyBytes: 0
+    retryExpression: "IsNetworkError() && Attempts() <= 2"
