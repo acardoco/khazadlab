@@ -141,3 +141,66 @@ helm upgrade nextcloud nextcloud/nextcloud \
   --set metrics.rules.enabled=false \
   --atomic --timeout 10m
 ```
+
+## NOTA si falla el upgrade
+
+Puede que se queje por tema redis con un mensaje parecido a este:
+
+```bash
+Configuring Redis as session handler => Searching for hook scripts (*.sh) to run, located in the folder "/docker-entrypoint-hooks.d/before-starting" ==> Skipped: the "before-starting" folder is empty (or does not exist) AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 10.42.1.123. Set the 'ServerName' directive globally to suppress this message AH00558: apache2: Could not reliably determine the server's fully qualified domain name, using 10.42.1.123. Set the 'ServerName' directive globally to suppress this message 
+[Thu Oct 02 20:54:29.037280 2025[] [mpm_prefork:notice[] [pid 1:tid 1] AH00163: Apache/2.4.62 (Debian) PHP/8.3.21 configured -- resuming normal operations 
+[Thu Oct 02 20:54:29.037320 2025[] [core:notice[] [pid 1:tid 1] AH00094: Command line: 'apache2 -D FOREGROUND' 10.42.1.1 - - [02/Oct/2025:20:54:40 +0000] "GET /status.php HTTP/1.1" 500 1451 "-" "kube-probe/1.32" 10.42.1.1 - - [02/Oct/2025:20:54:43 +0000] "GET /status.php HTTP/1.1" 500 1447 "-" "kube-probe/1.32" 10.42.1.1 - - 
+[02/Oct/2025:20:54:50 +0000] "GET /status.php HTTP/1.1" 500 1445 "-" "kube-probe/1.32" 10.42.1.1 - - [02/Oct/2025:20:54:53 +0000] "GET /status.php HTTP/1.1" 500 1447 "-" "kube-probe/1.32" 10.42.1.1 - - [02/Oct/2025:20:55:00 +0000] "GET /status.php HTTP/1.1" 500 1445 "-" "kube-probe/1.32" 10.42.1.1 - - [02/Oct/2025:20:55:03 +0000] "GET /status.php HTTP/1.1" 500 1453 "-" "kube-probe/1.32" 
+[Thu Oct 02 20:55:03.908235 2025[] [mpm_prefork:notice[] [pid 1:tid 1] AH00170: caught SIGWINCH, shutting down gracefully 10.42.1.1 - - [02/Oct/2025:20:55:03 +0000] "GET /status.php HTTP/1.1" 500 1449 "-" "kube-probe/1.32" stream closed EOF for nextcloud/nextcloud-6ccfc46f49-zk4fx (nextcloud)
+```
+
+HACER esto:
+
+```bash
+cat <<'EOF' >/tmp/nextcloud-upgrade-fix.yaml
+nextcloud:
+  update: 1
+  configs:
+    003-reverse-proxy.config.php: |-
+      <?php
+      if (!isset($CONFIG) || !is_array($CONFIG)) { $CONFIG = []; }
+      $CONFIG = array_merge($CONFIG, [
+        'overwritehost'         => 'nextcloud.khazadlab.es',
+        'overwriteprotocol'     => 'https',
+        'overwritewebroot'      => '/',
+        'overwrite.cli.url'     => 'https://nextcloud.khazadlab.es',
+        'trusted_proxies'       => ['10.42.0.0/16','10.43.0.0/16','10.43.203.42','10.42.0.1'],
+        'forwarded_for_headers' => ['HTTP_X_FORWARDED_FOR','HTTP_X_REAL_IP'],
+        'forwarded_host_headers'=> ['HTTP_X_FORWARDED_HOST'],
+        'forwarded_proto_headers'=> ['HTTP_X_FORWARDED_PROTO'],
+        'memcache.local'        => '\\OC\\Memcache\\APCu',
+        'memcache.distributed'  => '\\OC\\Memcache\\Redis',
+        'memcache.locking'      => '\\OC\\Memcache\\Redis',
+        'upload_max_chunk_size' => 104857600
+      ]);
+startupProbe:
+  enabled: true
+  initialDelaySeconds: 60
+  periodSeconds: 5
+  failureThreshold: 60
+
+metrics:
+  enabled: false
+  rules:
+    enabled: false
+
+externalDatabase:
+  enabled: false
+EOF
+```
+
+Y luego:
+
+```bash
+helm upgrade nextcloud nextcloud/nextcloud \
+  -n nextcloud \
+  --version 8.0.3 \
+  --reuse-values \
+  -f /tmp/nextcloud-upgrade-fix.yaml \
+  --atomic --timeout 15m
+```
