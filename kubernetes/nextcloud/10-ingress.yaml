@@ -5,7 +5,7 @@ metadata:
   namespace: nextcloud
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-dns
-    # traefik.ingress.kubernetes.io/router.middlewares: nextcloud-nextcloud-buffering@kubernetescrd
+    traefik.ingress.kubernetes.io/router.middlewares: nextcloud-nextcloud-buffering@kubernetescrd
     traefik.ingress.kubernetes.io/client-max-body-size: "5368709120" 
     traefik.ingress.kubernetes.io/readtimeout:  "3600"
     traefik.ingress.kubernetes.io/writetimeout: "3600"
