@@ -25,3 +25,12 @@ kubectl patch storageclass longhorn \
 Aplicar el script deploy-longhorn.sh
 
 # Sobre los dos ingreses:
+
+# Upgrade:
+
+```bash
+helm upgrade longhorn longhorn/longhorn \
+  --namespace longhorn-system \
+  --version 1.9.2 \
+  --values values-longhorn.yaml
+```

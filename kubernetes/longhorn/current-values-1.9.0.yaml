@@ -1,0 +1,5 @@
+USER-SUPPLIED VALUES:
+defaultSettings:
+  defaultReplicaCount: 1
+persistence:
+  defaultDiskPath: /nfs-data
