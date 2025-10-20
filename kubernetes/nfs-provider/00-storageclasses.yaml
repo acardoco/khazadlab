@@ -1,0 +1,38 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: nfs-longhorn
+provisioner: nfs.csi.k8s.io
+parameters:
+  server: 192.168.1.65
+  share: /longhorn
+mountOptions: [ "nfsvers=4.1", "rsize=1048576", "wsize=1048576", "hard", "timeo=600" ] #tamaños maximos de escritura y lectura, mejora throughput
+reclaimPolicy: Retain
+volumeBindingMode: Immediate
+allowVolumeExpansion: true
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: nfs-backups
+provisioner: nfs.csi.k8s.io
+parameters:
+  server: 192.168.1.65
+  share: /backups
+mountOptions: [ "nfsvers=4.1", "rsize=1048576", "wsize=1048576", "hard", "timeo=600" ] 
+reclaimPolicy: Retain
+volumeBindingMode: Immediate
+allowVolumeExpansion: true
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: nfs-media
+provisioner: nfs.csi.k8s.io
+parameters:
+  server: 192.168.1.65
+  share: /media
+mountOptions: [ "nfsvers=4.1", "rsize=1048576", "wsize=1048576", "hard", "timeo=600" ]
+reclaimPolicy: Retain
+volumeBindingMode: Immediate
+allowVolumeExpansion: true
