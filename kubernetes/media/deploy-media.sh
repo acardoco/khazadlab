@@ -11,3 +11,4 @@ envsubst < sonarr/01-pvc-sonarr.yaml | kubectl apply -f -
 
 envsubst < jellyfin/05-deployment-jellyfin.yaml | kubectl apply -f -
 envsubst < sonarr/05-deployment-sonarr.yaml | kubectl apply -f -
+envsubst < radarr/05-deployment-radarr.yaml | kubectl apply -f -
