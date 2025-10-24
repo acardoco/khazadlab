@@ -1,0 +1,19 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: radarr
+  namespace: media
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`radarr.khazadlab.es`)
+      kind: Rule
+      middlewares:
+        - name: default-headers-media   
+          namespace: media              
+      services:
+        - name: radarr
+          port: 80
+  tls:
+    secretName: tls-radarr-khazadlab
