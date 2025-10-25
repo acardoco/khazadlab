@@ -10,7 +10,7 @@ spec:
   mountOptions: ["nfsvers=4.1","hard","noatime"]
   nfs:
     server: 192.168.1.65
-    path: /media
+    path: /media/movies
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim

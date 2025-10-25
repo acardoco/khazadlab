@@ -22,4 +22,12 @@ envsubst < radarr/06-svc-radarr.yaml | kubectl apply -f -
 envsubst < jackett/06-svc-jackett.yaml | kubectl apply -f -
 envsubst < qBittorrent/06-svc-qBittorrent.yaml | kubectl apply -f -
 
+envsubst < qBittorrent/09-FlareSolverr.yaml | kubectl apply -f -
+
 envsubst < default-headers-media.yaml | kubectl apply -f -
+
+envsubst < jellyfin/10-ingress-jellyfin.yaml | kubectl apply -f -
+envsubst < sonarr/10-ingress-sonarr.yaml | kubectl apply -f -
+envsubst < radarr/10-ingress-radarr.yaml | kubectl apply -f -
+envsubst < jackett/10-ingress-jackett.yaml | kubectl apply -f -
+envsubst < qBittorrent/10-ingress-qBittorrent.yaml | kubectl apply -f -

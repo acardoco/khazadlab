@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: tls-khazadlab-wildcard
+  namespace: media
+spec:
+  secretName: tls-khazadlab-wildcard
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt-dns        
+  dnsNames:
+    - khazadlab.es
+    - "*.khazadlab.es"

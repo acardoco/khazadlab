@@ -26,6 +26,8 @@ spec:
           value: "1057" 
         - name: PGID
           value: "1056"  
+        - name: UMASK
+          value: "002"
         volumeMounts:
         - name: config
           mountPath: /config

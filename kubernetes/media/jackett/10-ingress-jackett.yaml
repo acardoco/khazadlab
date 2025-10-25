@@ -1,19 +1,21 @@
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
-  name: radarr
+  name: jackett
   namespace: media
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-dns
 spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`radarr.khazadlab.es`)
+    - match: Host(`jackett.khazadlab.es`)
       kind: Rule
       middlewares:
         - name: default-headers-media   
           namespace: media              
       services:
-        - name: radarr
+        - name: jackett
           port: 80
   tls:
     secretName: tls-khazadlab-wildcard
