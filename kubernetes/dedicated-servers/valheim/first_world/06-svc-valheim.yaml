@@ -15,3 +15,7 @@ spec:
     port: 2457
     targetPort: 2457
     protocol: UDP
+  - name: master
+    port: 2458
+    targetPort: 2458
+    protocol: UDP

@@ -23,3 +23,16 @@ spec:
     - services:
         - name: valheim-svc
           port: 2457
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRouteUDP
+metadata:
+  name: valheim-master
+  namespace: valheim
+spec:
+  entryPoints:
+    - valheim-master
+  routes:
+    - services:
+        - name: valheim-svc
+          port: 2458

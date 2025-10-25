@@ -15,6 +15,7 @@ spec:
       # 2) EntryPoints UDP para Valheim
       - "--entryPoints.valheim.address=:2456/udp"
       - "--entryPoints.valheim-query.address=:2457/udp"
+      - "--entryPoints.valheim-master.address=:2458/udp"
 
     # 3) Puertos a exponer en el LoadBalancer
     ports:
@@ -38,6 +39,13 @@ spec:
       valheim-query:
         port:        2457
         exposedPort: 2457
+        protocol:    UDP
+        expose:
+          default: true
+
+      valheim-master:
+        port:        2458
+        exposedPort: 2458
         protocol:    UDP
         expose:
           default: true

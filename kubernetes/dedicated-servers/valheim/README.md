@@ -23,3 +23,7 @@ Crear el archivo que viene en ```kubernetes/dedicated-servers/valheim/helm_stuff
 
 ## Desplegar el servidor
 Ejecutar el script ``` deploy_valheim.sh ```
+
+## Update IMPORTANTE
+Ya no uso Traefik: Metallb +  dejar que Cloudflare deje pasar trafico (sin modo proxy) al dominio valheim.khadalab.es (A)
+Y regla en router actualizada, apuntando a la IP que me ha dado el metallb a los puertos que usa valheim por UDP
