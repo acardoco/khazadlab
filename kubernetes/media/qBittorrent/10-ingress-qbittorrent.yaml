@@ -13,7 +13,7 @@ spec:
         - name: default-headers-media   
           namespace: media              
       services:
-        - name: qbittorrent
+        - name: qbittorrent-lb
           port: 80
   tls:
     secretName: tls-khazadlab-wildcard
