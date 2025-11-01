@@ -12,21 +12,73 @@ spec:
     metadata:
       labels:
         app: jellyfin
+      annotations:
+        container.apparmor.security.beta.kubernetes.io/jellyfin: unconfined
     spec:
+      nodeSelector:
+        kubernetes.io/hostname: andres-worker-intel
+      securityContext:
+        fsGroup: 44                 
+        supplementalGroups: [44, 992] # acceso a /dev/dri (video y GID 992)
+        seccompProfile:
+          type: Unconfined
       containers:
-      - name: jellyfin
-        image: jellyfin/jellyfin
-        volumeMounts:
-        - name: config
-          mountPath: /config
-        - name: videos
-          mountPath: /data/videos
-        ports:
-        - containerPort: 8096
+        - name: jellyfin
+          image: lscr.io/linuxserver/jellyfin:latest
+          securityContext:
+            privileged: true
+            allowPrivilegeEscalation: true
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: TZ
+              value: Europe/Madrid
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: JELLYFIN_CONFIG_DIR
+              value: /config
+            - name: JELLYFIN_DATA_DIR
+              value: /config/data
+            - name: JELLYFIN_CACHE_DIR
+              value: /cache
+            - name: LIBVA_DRIVER_NAME
+              value: iHD
+          ports:
+            - containerPort: 8096
+              name: http
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: videos
+              mountPath: /data/videos
+              readOnly: true
+            - name: transcode
+              mountPath: /transcode
+            - name: cache
+              mountPath: /cache
+            - name: dev-dri
+              mountPath: /dev/dri
+              readOnly: true
+          resources:
+            requests:
+              cpu: "800m"
+              memory: "1Gi"
+            limits:
+              memory: "4Gi"
       volumes:
-      - name: config
-        persistentVolumeClaim:
-          claimName: jellyfin-config
-      - name: videos
-        persistentVolumeClaim:
-          claimName: jellyfin-videos
+        - name: config
+          persistentVolumeClaim:
+            claimName: jellyfin-config
+        - name: videos
+          persistentVolumeClaim:
+            claimName: jellyfin-videos
+        - name: transcode
+          emptyDir: {}               # SSD local del nodo (ephemeral, rápido)
+        - name: cache
+          emptyDir:
+            medium: Memory           # cache en RAM 
+        - name: dev-dri
+          hostPath:
+            path: /dev/dri
+            type: Directory
