@@ -1,0 +1,21 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: prowlarr
+  namespace: media
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-dns
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`prowlarr.khazadlab.es`)
+      kind: Rule
+      middlewares:
+        - name: default-headers-media   
+          namespace: media              
+      services:
+        - name: prowlarr
+          port: 80
+  tls:
+    secretName: tls-khazadlab-wildcard
