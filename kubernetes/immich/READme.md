@@ -37,3 +37,11 @@ El tipo nuevo de CloudNativePG se busca en k8s con clusters.postgresql.cnpg.io
 
 Si da errores de permisos de postgresql en el pod del server, ejecutar a mano la instalacion de extensiones en el pod del postgresql
 psql -U postgres -d immich -c "CREATE EXTENSION IF NOT EXISTS ..."
+
+## Upgrade de version
+Forzamos de momento que se quede en la version chart de ahora. A futuro mirare de cambiarla a la 0.10.x
+
+helm upgrade immich immich/immich \
+  --version 0.9.3 \
+  -n immich \
+  -f values.yaml
