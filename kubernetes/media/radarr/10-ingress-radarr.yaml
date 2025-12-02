@@ -14,6 +14,6 @@ spec:
           namespace: media              
       services:
         - name: radarr
-          port: 80
+          port: 7878
   tls:
     secretName: tls-khazadlab-wildcard
