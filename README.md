@@ -90,3 +90,5 @@ curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server \
     --disable=servicelb \
     --tls-san=<my-domain>" sh - 
 ```
+
+NOTE: important to keep the same version between nodes: otherwise, unexpected errors may appear 
