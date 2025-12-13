@@ -12,8 +12,8 @@ spec:
     metadata:
       labels:
         app: jellyfin
-      annotations:
-        container.apparmor.security.beta.kubernetes.io/jellyfin: unconfined
+      # annotations:
+      #   container.apparmor.security.beta.kubernetes.io/jellyfin: unconfined
     spec:
       nodeSelector:
         kubernetes.io/hostname: andres-worker-intel
@@ -52,6 +52,8 @@ spec:
               mountPath: /config
             - name: videos
               mountPath: /data/videos
+            - name: series
+              mountPath: /data/series
               readOnly: true
             - name: transcode
               mountPath: /transcode
@@ -73,6 +75,9 @@ spec:
         - name: videos
           persistentVolumeClaim:
             claimName: jellyfin-videos
+        - name: series
+          persistentVolumeClaim:
+            claimName: jellyfin-series
         - name: transcode
           emptyDir: {}               # SSD local del nodo (ephemeral, rápido)
         - name: cache

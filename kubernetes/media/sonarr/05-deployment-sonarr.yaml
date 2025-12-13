@@ -24,7 +24,7 @@ spec:
         volumeMounts:
         - name: config
           mountPath: /config
-        - name: videos
+        - name: series
           mountPath: /tv
         - name: downloads
           mountPath: /downloads
@@ -34,9 +34,9 @@ spec:
       - name: config
         persistentVolumeClaim:
           claimName: sonarr-config
-      - name: videos
+      - name: series
         persistentVolumeClaim:
-          claimName: jellyfin-videos
+          claimName: jellyfin-series
       - name: downloads
         persistentVolumeClaim:
           claimName: qbitt-download

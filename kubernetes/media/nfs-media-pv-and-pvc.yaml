@@ -29,6 +29,34 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
+  name: jellyfin-series
+spec:
+  capacity:
+    storage: 400Gi
+  accessModes: ["ReadWriteMany"]
+  persistentVolumeReclaimPolicy: Retain
+  mountOptions: ["nfsvers=4.1","hard","noatime"]
+  nfs:
+    server: 192.168.1.65
+    path: /media/tv
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: jellyfin-series
+  namespace: media
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 400Gi
+  storageClassName: ""
+  volumeName: jellyfin-series
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
   name: qbitt-download
 spec:
   capacity:
