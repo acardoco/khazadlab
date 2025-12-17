@@ -1,0 +1,8 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: bazarr-auth
+  namespace: media
+spec:
+  basicAuth:
+    secret: bazarr-basic-auth

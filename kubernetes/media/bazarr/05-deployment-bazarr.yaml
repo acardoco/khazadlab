@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bazarr
+  namespace: media
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bazarr
+  template:
+    metadata:
+      labels:
+        app: bazarr
+    spec:
+      containers:
+        - name: bazarr
+          image: linuxserver/bazarr
+          env:
+            - name: PUID
+              value: "1057"
+            - name: PGID
+              value: "1056"
+            - name: UMASK
+              value: "002"
+            - name: TZ
+              value: "Europe/Madrid"
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: videos
+              mountPath: /movies
+            - name: series
+              mountPath: /tv
+            - name: downloads
+              mountPath: /downloads
+          ports:
+            - containerPort: 6767
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: bazarr-config
+        - name: videos
+          persistentVolumeClaim:
+            claimName: jellyfin-videos
+        - name: series
+          persistentVolumeClaim:
+            claimName: jellyfin-series
+        - name: downloads
+          persistentVolumeClaim:
+            claimName: qbitt-download

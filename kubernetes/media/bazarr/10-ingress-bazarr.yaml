@@ -1,0 +1,21 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: bazarr
+  namespace: media
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`bazarr.khazadlab.es`)
+      kind: Rule
+      middlewares:
+        - name: default-headers-media
+          namespace: media
+        - name: bazarr-auth
+          namespace: media
+      services:
+        - name: bazarr
+          port: 80
+  tls:
+    secretName: tls-khazadlab-wildcard
