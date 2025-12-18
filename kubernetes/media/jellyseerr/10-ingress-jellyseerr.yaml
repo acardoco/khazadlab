@@ -1,0 +1,19 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: jellyseerr
+  namespace: media
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`jellyseerr.khazadlab.es`)
+      kind: Rule
+      middlewares:
+        - name: default-headers-media
+          namespace: media
+      services:
+        - name: jellyseerr
+          port: 80
+  tls:
+    secretName: tls-khazadlab-wildcard
