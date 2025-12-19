@@ -1,4 +1,4 @@
-¡Buenas, $USER! 😊
+¡Buenas, $USER! 
 
 Ya estás dentro. Te dejo todo súper fácil:
 
@@ -19,4 +19,10 @@ Ya estás dentro. Te dejo todo súper fácil:
 * En Jellyseerr buscas la peli/serie y le das a “Request / Solicitar”.
 * Yo lo apruebo y en nada aparece lista y bien ordenadita para verla en Jellyfin ✨
 
-Si te atascas en algún paso, me dices y te echo una mano 😉
+⏳ Importante: en Jellyseerr puedes ver el estado del proceso (si está descargando, procesando o ya disponible) y cuándo aparece lista para verla en Jellyfin 👀✅
+
+🚫 Normas rápidas
+* Máximo de solicitudes semanales: 10 de películas y de 3 series
+* No compartas tu cuenta con nadie. Si se comparte, ban directo.
+
+Si te atascas en algún paso, me dices 😉
