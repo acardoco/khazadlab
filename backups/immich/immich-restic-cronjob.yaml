@@ -1,0 +1,60 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: immich-restic-backup
+  namespace: immich
+spec:
+  schedule: "30 3 * * 0"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 5
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: restic
+              image: restic/restic:0.17.3
+              env:
+                - name: RESTIC_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: restic-secret
+                      key: RESTIC_PASSWORD
+              command: ["/bin/sh","-lc"]
+              args:
+                - |
+                  set -euo pipefail
+                  REPO="/repo/immich/restic"
+                  mkdir -p "$REPO"
+
+                  if [ ! -f "$REPO/config" ]; then
+                    echo "[restic] init repo"
+                    restic init --repo "$REPO"
+                  fi
+
+                  echo "[restic] backup originals"
+                  restic --repo "$REPO" backup \
+                    /data/upload \
+                    /data/profile \
+                    --verbose
+
+                  echo "[restic] retention + prune"
+                  restic --repo "$REPO" forget --prune \
+                    --keep-daily 7 --keep-weekly 4 --keep-monthly 12
+
+                  restic --repo "$REPO" snapshots
+              volumeMounts:
+                - name: immich-library
+                  mountPath: /data
+                  readOnly: true
+                - name: nfs-backup
+                  mountPath: /repo
+          volumes:
+            - name: immich-library
+              persistentVolumeClaim:
+                claimName: immich-library
+            - name: nfs-backup
+              persistentVolumeClaim:
+                claimName: immich-backup-nfs
