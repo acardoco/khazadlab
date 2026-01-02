@@ -1,0 +1,56 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: immich-pg-dump
+  namespace: immich
+spec:
+  schedule: "10 4 * * *"   # diario 04:10
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 5
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: pgdump
+              image: postgres:16-alpine
+              env:
+                - name: PGHOST
+                  value: immich-pg-rw.immich.svc.cluster.local
+                - name: PGPORT
+                  value: "5432"
+                - name: PGUSER
+                  value: immich
+                - name: PGDATABASE
+                  value: immich
+                - name: PGPASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: immich-db-auth
+                      key: password
+              command: ["/bin/sh","-lc"]
+              args:
+                - |
+                  set -euo pipefail
+                  TS="$(date +%F_%H%M)"
+                  OUT="/backup/immich/db"
+                  mkdir -p "$OUT"
+
+                  echo "[pg_dump] starting..."
+                  # -Fc = formato custom (comprimido, restauración flexible)
+                  pg_dump -Fc -f "$OUT/immich_${TS}.dump"
+
+                  echo "[pg_dump] done:"
+                  ls -lh "$OUT/immich_${TS}.dump"
+
+                  # Retención: borra dumps > 30 días
+                  find "$OUT" -type f -name "immich_*.dump" -mtime +30 -delete
+              volumeMounts:
+                - name: nfs-backup
+                  mountPath: /backup
+          volumes:
+            - name: nfs-backup
+              persistentVolumeClaim:
+                claimName: immich-backup-nfs
