@@ -28,24 +28,21 @@ spec:
           volumeMounts:
             - name: config
               mountPath: /config
-            - name: videos
+            - name: media
               mountPath: /movies
-            - name: series
+              subPath: movies
+            - name: media
               mountPath: /tv
-            - name: downloads
+              subPath: tv
+            - name: media
               mountPath: /downloads
+              subPath: downloads
           ports:
             - containerPort: 6767
       volumes:
         - name: config
           persistentVolumeClaim:
             claimName: bazarr-config
-        - name: videos
+        - name: media
           persistentVolumeClaim:
-            claimName: jellyfin-videos
-        - name: series
-          persistentVolumeClaim:
-            claimName: jellyfin-series
-        - name: downloads
-          persistentVolumeClaim:
-            claimName: qbitt-download
+            claimName: media-root

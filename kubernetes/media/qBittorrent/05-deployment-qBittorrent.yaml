@@ -31,14 +31,14 @@ spec:
         volumeMounts:
         - name: config
           mountPath: /config
-        - name: downloads
-          mountPath: /downloads
+        - name: media
+          mountPath: /data
         ports:
         - containerPort: 8080
       volumes:
       - name: config
         persistentVolumeClaim:
           claimName: qbittorrent-config
-      - name: downloads
+      - name: media
         persistentVolumeClaim:
-          claimName: qbitt-download
+          claimName: media-root

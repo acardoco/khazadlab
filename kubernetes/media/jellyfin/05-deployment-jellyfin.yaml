@@ -50,10 +50,12 @@ spec:
           volumeMounts:
             - name: config
               mountPath: /config
-            - name: videos
+            - name: media
               mountPath: /data/videos
-            - name: series
+              subPath: movies
+            - name: media
               mountPath: /data/series
+              subPath: tv
               readOnly: true
             - name: transcode
               mountPath: /transcode
@@ -72,12 +74,9 @@ spec:
         - name: config
           persistentVolumeClaim:
             claimName: jellyfin-config
-        - name: videos
+        - name: media
           persistentVolumeClaim:
-            claimName: jellyfin-videos
-        - name: series
-          persistentVolumeClaim:
-            claimName: jellyfin-series
+            claimName: media-root
         - name: transcode
           emptyDir: {}               # SSD local del nodo (ephemeral, rápido)
         - name: cache

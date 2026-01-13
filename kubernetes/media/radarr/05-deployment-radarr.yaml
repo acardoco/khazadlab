@@ -26,19 +26,14 @@ spec:
         volumeMounts:
         - name: config
           mountPath: /config
-        - name: videos
-          mountPath: /movies
-        - name: downloads
-          mountPath: /downloads
+        - name: media
+          mountPath: /data
         ports:
         - containerPort: 7878
       volumes:
       - name: config
         persistentVolumeClaim:
           claimName: radarr-config
-      - name: videos
+      - name: media
         persistentVolumeClaim:
-          claimName: jellyfin-videos
-      - name: downloads
-        persistentVolumeClaim:
-          claimName: qbitt-download
+          claimName: media-root

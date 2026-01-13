@@ -24,19 +24,14 @@ spec:
         volumeMounts:
         - name: config
           mountPath: /config
-        - name: series
-          mountPath: /tv
-        - name: downloads
-          mountPath: /downloads
+        - name: media
+          mountPath: /data
         ports:
         - containerPort: 8989
       volumes:
       - name: config
         persistentVolumeClaim:
           claimName: sonarr-config
-      - name: series
+      - name: media
         persistentVolumeClaim:
-          claimName: jellyfin-series
-      - name: downloads
-        persistentVolumeClaim:
-          claimName: qbitt-download
+          claimName: media-root
