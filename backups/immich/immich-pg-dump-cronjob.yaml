@@ -4,7 +4,7 @@ metadata:
   name: immich-pg-dump
   namespace: immich
 spec:
-  schedule: "10 4 * * *"   # diario 04:10
+  schedule: "10 4 * * 0"   # domingio a las 04:10
   concurrencyPolicy: Forbid
   successfulJobsHistoryLimit: 2
   failedJobsHistoryLimit: 5
