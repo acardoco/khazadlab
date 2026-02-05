@@ -4,13 +4,17 @@ metadata:
   name: media-root
 spec:
   capacity:
-    storage: 2Ti
+    storage: 3Ti
   accessModes: ["ReadWriteMany"]
   persistentVolumeReclaimPolicy: Retain
-  mountOptions: ["nfsvers=4.1","hard","noatime"]
+  mountOptions:
+    - vers=3
+    - proto=tcp
+    - hard
+    - noatime
   nfs:
     server: 192.168.1.65
-    path: /media
+    path: /volume1/media
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -21,6 +25,6 @@ spec:
   accessModes: ["ReadWriteMany"]
   resources:
     requests:
-      storage: 2Ti
+      storage: 3Ti
   storageClassName: ""
   volumeName: media-root
