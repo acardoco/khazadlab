@@ -23,7 +23,7 @@ ufw allow in on tailscale0 to any port 22 proto tcp
 # (si quieres) Kubernetes API por Tailscale en el master
 ufw allow in on tailscale0 to any port 6443 proto tcp
 
-
+sudo ufw allow from 10.42.0.0/16 to any port 6443 proto tcp
 
 ## workers
 
@@ -50,7 +50,15 @@ ufw allow in on tailscale0 to any port 22 proto tcp
 #valheim hosting
 # ufw allow from 192.168.1.0/24 to any port 2456:2458 proto udp
 
+sudo ufw allow from 192.168.1.0/24 to any port 9345 proto tcp
+
+
+
 
 
 ## y para /etc/default/ufw
 vim /etc/default/ufw # y poner IPV6=no
+
+
+# si falla nfs
+sudo ufw allow out to 192.168.1.65 port 2049 proto tcp
