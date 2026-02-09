@@ -44,6 +44,8 @@ spec:
               value: /cache
             - name: LIBVA_DRIVER_NAME
               value: iHD
+            - name: DOCKER_MODS
+              value: linuxserver/mods:jellyfin-opencl-intel
           ports:
             - containerPort: 8096
               name: http
