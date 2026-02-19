@@ -5,12 +5,14 @@ metadata:
 spec:
   capacity:
     storage: 2Ti
-  accessModes:
-    - ReadWriteMany
+  accessModes: ["ReadWriteMany"]
   persistentVolumeReclaimPolicy: Retain
   storageClassName: ""
   mountOptions:
-    - nfsvers=4.1
+    - nfsvers=3
+    - hard
+    - timeo=600
+    - retrans=2
   nfs:
     server: 192.168.1.65
     path: /volume1/backups
@@ -25,6 +27,6 @@ spec:
     - ReadWriteMany
   resources:
     requests:
-      storage: 2Ti
+      storage: 500Gi
   storageClassName: ""
   volumeName: pv-immich-backup-nfs
