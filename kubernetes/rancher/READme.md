@@ -53,3 +53,15 @@ helm upgrade rancher rancher-latest/rancher \
   --reuse-values \
   --set hostname=rancher.khazadlab.es
 ```
+# 8. Upgrade
+Primero 2.11.3 → 2.12.3
+```bash
+helm upgrade rancher rancher-stable/rancher \
+  -n cattle-system --reuse-values --version 2.12.3
+```
+
+Segundo 2.12.3 → 2.13.2
+```bash
+helm upgrade rancher rancher-stable/rancher \
+  -n cattle-system --reuse-values --version 2.13.2
+```

@@ -1,0 +1,8 @@
+hostname: rancher.khazadlab.es
+ingress:
+  tls:
+    source: letsEncrypt
+letsencrypt:
+  email: andres.cardosoc12@gmail.com
+  ingress:
+    class: traefik
