@@ -25,3 +25,4 @@ We'll backup the pg-1 pod with the cronjob:
 
 ```bash
 kubectl apply -f immich-pg-dump-cronjob.yaml
+```
