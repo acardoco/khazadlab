@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: openclaw-config
+  namespace: ai-ops
+data:
+  openclaw.json: |
+    {
+      "session": {
+        "dmScope": "per-channel-peer"
+      },
+      "agents": {
+        "defaults": {
+          "model": {
+            "primary": "ollama/gemma3:1b"
+          }
+        }
+      },
+      "models": {
+        "providers": {
+          "ollama": {
+            "baseUrl": "http://ollama.ai-ops.svc.cluster.local:11434"
+          }
+        }
+      },
+      "channels": {
+        "whatsapp": {
+          "dmPolicy": "allowlist",
+          "allowFrom": ["+34JEJEJJJEJE"],
+          "groupPolicy": "disabled"
+        }
+      },
+      "tools": {
+        "profile": "minimal",
+        "allow": ["exec"],
+        "deny": [
+          "browser",
+          "read",
+          "write",
+          "edit",
+          "apply_patch",
+          "memory_get",
+          "memory_search"
+        ]
+      }
+    }

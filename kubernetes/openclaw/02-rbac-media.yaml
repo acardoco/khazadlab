@@ -1,0 +1,86 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: openclaw-readonly
+  namespace: media
+rules:
+  - apiGroups: [""]
+    resources:
+      - pods
+      - pods/log
+      - services
+      - endpoints
+      - persistentvolumeclaims
+      - events
+    verbs: ["get", "list", "watch"]
+
+  - apiGroups: ["events.k8s.io"]
+    resources: ["events"]
+    verbs: ["get", "list", "watch"]
+
+  - apiGroups: ["apps"]
+    resources:
+      - deployments
+      - statefulsets
+      - daemonsets
+      - replicasets
+    verbs: ["get", "list", "watch"]
+
+  - apiGroups: ["batch"]
+    resources:
+      - jobs
+      - cronjobs
+    verbs: ["get", "list", "watch"]
+
+  - apiGroups: ["networking.k8s.io"]
+    resources:
+      - ingresses
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: openclaw-restart-approved
+  namespace: media
+rules:
+  - apiGroups: ["apps"]
+    resources: ["deployments"]
+    resourceNames:
+      - jellyfin
+      - immich-server
+      - nextcloud
+    verbs: ["get", "patch"]
+
+  - apiGroups: ["apps"]
+    resources: ["statefulsets"]
+    resourceNames:
+      - qbittorrent
+    verbs: ["get", "patch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: openclaw-readonly-binding
+  namespace: media
+subjects:
+  - kind: ServiceAccount
+    name: openclaw-k8s
+    namespace: ai-ops
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: openclaw-readonly
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: openclaw-restart-binding
+  namespace: media
+subjects:
+  - kind: ServiceAccount
+    name: openclaw-k8s
+    namespace: ai-ops
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: openclaw-restart-approved
