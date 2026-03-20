@@ -5,6 +5,7 @@ on:
     paths:
       - kubernetes/openclaw/Dockerfile.openclaw
       - .github/workflows/build-openclaw.yml
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -49,7 +50,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: .kubernetes/openclaw/Dockerfile.openclaw
+          file: kubernetes/openclaw/Dockerfile.openclaw
           push: true
           platforms: linux/amd64
           tags: ${{ steps.meta.outputs.tags }}
