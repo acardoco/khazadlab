@@ -19,7 +19,7 @@ data:
       "models": {
         "providers": {
           "ollama": {
-            "baseUrl": "http://ollama.ai-ops.svc.cluster.local:11434"
+            "baseUrl": "http://ollama.ai-ops.svc.cluster.local:62323"
           }
         }
       },
