@@ -38,7 +38,7 @@ spec:
           image: ollama/ollama:latest
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 114345
+            - containerPort: 62323
               name: http
           env:
             - name: OLLAMA_HOST
