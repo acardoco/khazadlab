@@ -6,41 +6,58 @@ metadata:
 data:
   openclaw.json: |
     {
+      "gateway": {
+        "mode": "local",
+        "bind": "lan",
+        "auth": {
+          "mode": "token",
+          "token": "${OPENCLAW_GATEWAY_TOKEN}"
+        }
+      },
       "session": {
         "dmScope": "per-channel-peer"
       },
       "agents": {
         "defaults": {
           "model": {
-            "primary": "ollama/gemma3:1b"
+            "primary": "ollama/qwen2.5:0.5b"
           }
         }
       },
       "models": {
         "providers": {
           "ollama": {
-            "baseUrl": "http://ollama.ai-ops.svc.cluster.local:62323"
+            "baseUrl": "http://ollama.ai-ops.svc.cluster.local:62323",
+            "api": "ollama",
+            "apiKey": "ollama-local",
+            "models": [
+              {
+                "id": "qwen2.5:0.5b",
+                "name": "Qwen 2.5 0.5B",
+                "reasoning": false,
+                "input": ["text"],
+                "cost": {
+                  "input": 0,
+                  "output": 0,
+                  "cacheRead": 0,
+                  "cacheWrite": 0
+                },
+                "contextWindow": 16384,
+                "maxTokens": 256
+              }
+            ]
           }
         }
       },
       "channels": {
         "whatsapp": {
           "dmPolicy": "allowlist",
-          "allowFrom": ["+34JEJEJJJEJE"],
+          "allowFrom": ["${TLF}"],
           "groupPolicy": "disabled"
         }
       },
       "tools": {
         "profile": "minimal",
-        "allow": ["exec"],
-        "deny": [
-          "browser",
-          "read",
-          "write",
-          "edit",
-          "apply_patch",
-          "memory_get",
-          "memory_search"
-        ]
+        "allow": ["exec"]
       }
     }

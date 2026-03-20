@@ -43,6 +43,10 @@ spec:
           env:
             - name: OLLAMA_HOST
               value: "0.0.0.0:11434"
+            - name: OLLAMA_CONTEXT_LENGTH
+              value: "16384"
+            - name: OLLAMA_NUM_PARALLEL
+              value: "1"
           resources:
             requests:
               cpu: "500m"
