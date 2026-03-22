@@ -7,4 +7,5 @@ kubectl apply -f 02-rbac-media.yaml
 kubectl apply -f 02-rbac-monitoring.yaml
 envsubst < 03-openclaw-secret.yaml | kubectl apply -f -
 envsubst < 04-openclaw-config.yaml | kubectl apply -f -
+envsubst < 04-openclaw-kubeconfig.yaml | kubectl apply -f -
 kubectl apply -f 05-openclaw.yaml

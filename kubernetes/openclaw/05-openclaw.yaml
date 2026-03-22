@@ -47,6 +47,8 @@ spec:
               value: /data/.openclaw
             - name: OPENCLAW_CONFIG_PATH
               value: /config/openclaw.json
+            - name: KUBECONFIG
+              value: /data/kubeconfig
             - name: OPENCLAW_GATEWAY_TOKEN
               valueFrom:
                 secretKeyRef:
@@ -84,6 +86,9 @@ spec:
             - name: config
               mountPath: /config/openclaw.json
               subPath: openclaw.json
+            - name: kubeconfig
+              mountPath: /data/kubeconfig
+              subPath: config
       volumes:
         - name: state
           persistentVolumeClaim:
@@ -91,3 +96,6 @@ spec:
         - name: config
           configMap:
             name: openclaw-config
+        - name: kubeconfig
+          configMap:
+            name: openclaw-kubeconfig

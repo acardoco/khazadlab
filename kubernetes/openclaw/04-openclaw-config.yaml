@@ -79,8 +79,19 @@ data:
           "groupPolicy": "disabled"
         }
       },
+      "commands": {
+        "text": true,
+        "bash": true,
+        "bashForegroundMs": 5000
+      },
       "tools": {
         "profile": "minimal",
-        "allow": ["exec"]
+        "allow": ["exec"],
+        "elevated": {
+          "enabled": true,
+          "allowFrom": {
+            "whatsapp": ["${TLF}"]
+          }
+        }
       }
     }
