@@ -64,6 +64,14 @@ data:
           }
         }
       },
+      "plugins": {
+        "allow": ["whatsapp"],
+        "entries": {
+          "whatsapp": {
+            "enabled": true
+          }
+        }
+      },
       "channels": {
         "whatsapp": {
           "dmPolicy": "allowlist",
