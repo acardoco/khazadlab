@@ -93,10 +93,12 @@ data:
           "allowFrom": {
             "whatsapp": ["${TLF}"]
           }
+        },
+        "exec": {
+          "host": "gateway",
+          "security": "full",
+          "ask": "off",
+          "timeoutSec": 1800
         }
-      },
-      "exec": {
-        "security": "full",
-        "ask": "off"
       }
     }

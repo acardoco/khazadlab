@@ -5,6 +5,7 @@ kubectl apply -f 00-pvc-openclaw.yaml
 # kubectl apply -f 01-ollama.yaml
 kubectl apply -f 02-rbac-media.yaml
 kubectl apply -f 02-rbac-monitoring.yaml
+kubectl apply -f 02-rbac-nodes.yaml
 envsubst < 03-openclaw-secret.yaml | kubectl apply -f -
 envsubst < 04-openclaw-config.yaml | kubectl apply -f -
 envsubst < 04-openclaw-kubeconfig.yaml | kubectl apply -f -
