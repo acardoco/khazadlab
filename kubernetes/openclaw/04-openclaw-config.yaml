@@ -20,20 +20,21 @@ data:
       "agents": {
         "defaults": {
           "model": {
-            "primary": "ollama/qwen2.5:0.5b"
+            "primary": "llm/gpt-5.4-mini",
+            "fallbacks": ["llm/gpt-5.4-nano"]
           }
         }
       },
       "models": {
         "providers": {
-          "ollama": {
-            "baseUrl": "http://ollama.ai-ops.svc.cluster.local:62323",
-            "api": "ollama",
-            "apiKey": "ollama-local",
+          "llm": {
+            "baseUrl": "https://api.openai.com/v1",
+            "api": "openai-completions",
+            "apiKey": "${OPENAI_API_KEY}",
             "models": [
               {
-                "id": "qwen2.5:0.5b",
-                "name": "Qwen 2.5 0.5B",
+                "id": "gpt-5.4-mini",
+                "name": "GPT-5.4 mini",
                 "reasoning": false,
                 "input": ["text"],
                 "cost": {
@@ -42,8 +43,22 @@ data:
                   "cacheRead": 0,
                   "cacheWrite": 0
                 },
-                "contextWindow": 16384,
-                "maxTokens": 256
+                "contextWindow": 128000,
+                "maxTokens": 1024
+              },
+              {
+                "id": "gpt-5.4-nano",
+                "name": "GPT-5.4 nano",
+                "reasoning": false,
+                "input": ["text"],
+                "cost": {
+                  "input": 0,
+                  "output": 0,
+                  "cacheRead": 0,
+                  "cacheWrite": 0
+                },
+                "contextWindow": 128000,
+                "maxTokens": 1024
               }
             ]
           }
