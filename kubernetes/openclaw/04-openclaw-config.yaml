@@ -9,6 +9,7 @@ data:
       "gateway": {
         "mode": "local",
         "bind": "lan",
+        "channelHealthCheckMinutes": 0,
         "auth": {
           "mode": "token",
           "token": "${OPENCLAW_GATEWAY_TOKEN}"
@@ -23,6 +24,9 @@ data:
           "model": {
             "primary": "llm/gpt-5.4-mini",
             "fallbacks": ["llm/gpt-5.4-nano"]
+          },
+          "heartbeat": {
+            "every": "0m"
           }
         }
       },
@@ -45,7 +49,7 @@ data:
                   "cacheWrite": 0
                 },
                 "contextWindow": 128000,
-                "maxTokens": 1024
+                "maxTokens": 512
               },
               {
                 "id": "gpt-5.4-nano",
@@ -59,7 +63,7 @@ data:
                   "cacheWrite": 0
                 },
                 "contextWindow": 128000,
-                "maxTokens": 1024
+                "maxTokens": 512
               }
             ]
           }
@@ -74,6 +78,13 @@ data:
         }
       },
       "channels": {
+        "defaults": {
+          "heartbeat": {
+            "showOk": false,
+            "showAlerts": false,
+            "useIndicator": false
+          }
+        },
         "whatsapp": {
           "dmPolicy": "allowlist",
           "allowFrom": ["${TLF}"],
