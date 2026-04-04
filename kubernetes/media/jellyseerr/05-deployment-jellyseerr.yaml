@@ -13,10 +13,33 @@ spec:
       labels:
         app: jellyseerr
     spec:
+      securityContext:
+        fsGroup: 1000
+      initContainers:
+        - name: fix-seerr-perms
+          image: ghcr.io/seerr-team/seerr:v3.1.0
+          imagePullPolicy: IfNotPresent
+          command:
+            - sh
+            - -c
+            - |
+              mkdir -p /app/config/logs
+              chown -R 1000:1000 /app/config
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
+          volumeMounts:
+            - name: config
+              mountPath: /app/config
       containers:
         - name: jellyseerr
           image: ghcr.io/seerr-team/seerr:v3.1.0
           imagePullPolicy: IfNotPresent
+          securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
           env:
             - name: TZ
               value: "Europe/Madrid"
