@@ -92,3 +92,4 @@ curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="server \
 ```
 
 NOTE: important to keep the same version between nodes: otherwise, unexpected errors may appear 
+NOTE 2: If pulling images fail,  disable ipv6 in the node

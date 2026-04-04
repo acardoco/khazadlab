@@ -1,0 +1,124 @@
+image:
+  repository: library/nextcloud
+  # flavor: apache
+  # tag: 33.0.0-apache
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+
+ingress:
+  enabled: false
+
+nextcloud:
+  host: nextcloud.khazadlab.es
+  existingSecret:
+    enabled: true
+    secretName: nextcloud-admin
+    usernameKey: nextcloud-username
+    passwordKey: nextcloud-password
+
+  trustedDomains:
+    - nextcloud.khazadlab.es
+
+  phpConfigs:
+    zz-upload.ini: |-
+      upload_max_filesize=10G
+      post_max_size=10G
+      memory_limit=512M
+      max_execution_time=3600
+      max_input_time=3600
+
+  extraEnv:
+    - name: OVERWRITEHOST
+      value: nextcloud.khazadlab.es
+    - name: OVERWRITEPROTOCOL
+      value: https
+    - name: OVERWRITECLIURL
+      value: https://nextcloud.khazadlab.es
+
+  configs:
+    01-proxy.config.php: |-
+      <?php
+      $CONFIG = array (
+        'trusted_proxies' =>
+        array (
+          0 => '10.42.0.0/16',
+          1 => '10.43.0.0/16',
+        ),
+        'forwarded_for_headers' =>
+        array (
+          0 => 'HTTP_X_FORWARDED_FOR',
+        ),
+      );
+
+internalDatabase:
+  enabled: false
+
+externalDatabase:
+  enabled: true
+  type: postgresql
+  host: nextcloud-postgresql
+  database: nextcloud
+  existingSecret:
+    enabled: true
+    secretName: nextcloud-db
+    usernameKey: db-username
+    passwordKey: db-password
+
+postgresql:
+  enabled: true
+  global:
+    postgresql:
+      auth:
+        username: nextcloud
+        database: nextcloud
+        existingSecret: nextcloud-db
+        secretKeys:
+          adminPasswordKey: postgres-password
+          userPasswordKey: db-password
+  primary:
+    persistence:
+      enabled: true
+      storageClass: longhorn
+      accessMode: ReadWriteOnce
+      size: 30Gi
+
+redis:
+  enabled: true
+  auth:
+    enabled: true
+    existingSecret: nextcloud-redis
+    existingSecretPasswordKey: redis-password
+
+cronjob:
+  enabled: true
+
+service:
+  type: ClusterIP
+  port: 8080
+
+persistence:
+  enabled: true
+  storageClass: longhorn
+  accessMode: ReadWriteOnce
+  size: 100Gi
+
+startupProbe:
+  enabled: true
+  initialDelaySeconds: 60
+  periodSeconds: 10
+  failureThreshold: 30
+
+livenessProbe:
+  enabled: true
+  initialDelaySeconds: 60
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 6
+
+readinessProbe:
+  enabled: true
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 6

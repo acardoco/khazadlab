@@ -1,43 +1,56 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: ingress-simple-ui
+  name: nextcloud
   namespace: nextcloud
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-dns
-    traefik.ingress.kubernetes.io/router.middlewares: nextcloud-nextcloud-buffering@kubernetescrd
-    traefik.ingress.kubernetes.io/client-max-body-size: "5368709120" 
-    traefik.ingress.kubernetes.io/readtimeout:  "3600"
-    traefik.ingress.kubernetes.io/writetimeout: "3600"
-    traefik.ingress.kubernetes.io/idleTimeout:   "3600"
-    kubernetes.io/ingress.class: traefik
-    traefik.ingress.kubernetes.io/router.entrypoints: web,websecure
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
-    # # Reglas para .well-known
-    # traefik.ingress.kubernetes.io/router.middlewares: nextcloud-rewrite-headers@kubernetescrd
+    traefik.ingress.kubernetes.io/router.middlewares: nextcloud-nextcloud-buffering@kubernetescrd
 spec:
   ingressClassName: traefik
   rules:
     - host: nextcloud.khazadlab.es
       http:
         paths:
-          # Rutas de auto-descubrimiento CardDAV/CalDAV
-          - path: /.well-known/carddav
+          - path: /
             pathType: Prefix
+            backend:
+              service:
+                name: nextcloud
+                port:
+                  number: 8080
+  tls:
+    - hosts:
+        - nextcloud.khazadlab.es
+      secretName: tls-nextcloud-khazadlab
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nextcloud-dav-redirect
+  namespace: nextcloud
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-dns
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    traefik.ingress.kubernetes.io/router.middlewares: nextcloud-nextcloud-dav-redirect@kubernetescrd
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: nextcloud.khazadlab.es
+      http:
+        paths:
+          - path: /.well-known/carddav
+            pathType: Exact
             backend:
               service:
                 name: nextcloud
                 port:
                   number: 8080
           - path: /.well-known/caldav
-            pathType: Prefix
-            backend:
-              service:
-                name: nextcloud
-                port:
-                  number: 8080
-          - path: /
-            pathType: Prefix
+            pathType: Exact
             backend:
               service:
                 name: nextcloud

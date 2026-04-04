@@ -16,6 +16,33 @@ helm install nextcloud nextcloud/nextcloud \
   -f nextcloud-values.yaml
 ```
 
+## Update-reinstalacion 04/2026
+```bash
+kubectl -n nextcloud create secret generic nextcloud-admin \
+  --from-literal=nextcloud-username=admin \
+  --from-literal=nextcloud-password=$NEXTCLOUD_PASWORD
+
+kubectl -n nextcloud create secret generic nextcloud-db \
+  --from-literal=db-username=nextcloud \
+  --from-literal=db-password=$POSTGRESQL_PASSWORD \
+  --from-literal=postgres-password=$POSTGRESQL_PASSWORD
+
+kubectl -n nextcloud create secret generic nextcloud-redis \
+  --from-literal=redis-password=$REDIS_PASSWORD
+
+k apply -f 09-middleware.yaml   
+
+k apply -f 10-ingress.yaml 
+
+helm upgrade --install nextcloud nextcloud/nextcloud \
+  -n nextcloud -f nextcloud-values-minimal.yaml 
+```
+
+
+
+
+## Otras cosillas de la instalacion anterior
+
 # Integrar con Keycloak
 Habilitar primero OIDC en el nextcloud (desde la UI se puede hacer)
 
