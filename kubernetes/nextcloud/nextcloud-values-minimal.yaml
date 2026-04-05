@@ -1,7 +1,7 @@
 image:
   repository: library/nextcloud
-  # flavor: apache
-  # tag: 33.0.0-apache
+  flavor: apache
+  tag: 33.0.0-apache
   pullPolicy: IfNotPresent
 
 replicaCount: 1
@@ -81,7 +81,7 @@ postgresql:
       enabled: true
       storageClass: longhorn
       accessMode: ReadWriteOnce
-      size: 30Gi
+      size: 10Gi
 
 redis:
   enabled: true
@@ -101,7 +101,7 @@ persistence:
   enabled: true
   storageClass: longhorn
   accessMode: ReadWriteOnce
-  size: 100Gi
+  size: 30Gi
 
 startupProbe:
   enabled: true
