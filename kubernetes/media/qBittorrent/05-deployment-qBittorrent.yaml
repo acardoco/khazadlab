@@ -15,7 +15,8 @@ spec:
     spec:
       containers:
       - name: qbittorrent
-        image: linuxserver/qbittorrent
+        image: linuxserver/qbittorrent:5.1.2
+        imagePullPolicy: IfNotPresent
         resources:
           limits:
             memory: "2Gi"
