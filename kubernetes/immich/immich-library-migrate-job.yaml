@@ -1,0 +1,58 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: immich-library-migrate-longhorn-to-nfs
+  namespace: immich
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: rsync
+          image: alpine:3.20
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
+          command: ["/bin/sh", "-lc"]
+          args:
+            - |
+              set -euo pipefail
+
+              apk add --no-cache rsync coreutils findutils
+
+              echo "Source size:"
+              du -sh /src || true
+
+              echo "Destination size before:"
+              du -sh /dst || true
+
+              echo "Starting rsync..."
+              rsync -aH --numeric-ids --delete --info=progress2 /src/ /dst/
+
+              echo "Verification dry-run..."
+              rsync -aHn --numeric-ids --delete /src/ /dst/ | tee /tmp/rsync-dryrun.txt
+
+              if [ -s /tmp/rsync-dryrun.txt ]; then
+                echo "ERROR: dry-run still shows differences"
+                cat /tmp/rsync-dryrun.txt
+                exit 1
+              fi
+
+              echo "Destination size after:"
+              du -sh /dst || true
+
+              echo "Migration completed successfully."
+          volumeMounts:
+            - name: old-library
+              mountPath: /src
+              readOnly: true
+            - name: new-library
+              mountPath: /dst
+      volumes:
+        - name: old-library
+          persistentVolumeClaim:
+            claimName: immich-library
+        - name: new-library
+          persistentVolumeClaim:
+            claimName: immich-library-nfs
