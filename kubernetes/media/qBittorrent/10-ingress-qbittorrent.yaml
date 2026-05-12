@@ -10,10 +10,13 @@ spec:
     - match: Host(`qbittorrent.khazadlab.es`)
       kind: Rule
       middlewares:
-        - name: default-headers-media   
-          namespace: media              
+        - name: default-headers-media
+          namespace: media
+        - name: qbittorrent-webui-headers
+          namespace: media
       services:
-        - name: qbittorrent-lb
+        - name: qbittorrent
           port: 80
+          passHostHeader: false
   tls:
     secretName: tls-khazadlab-wildcard

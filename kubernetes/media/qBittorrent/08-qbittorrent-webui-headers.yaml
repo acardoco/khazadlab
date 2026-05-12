@@ -1,0 +1,10 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: qbittorrent-webui-headers
+  namespace: media
+spec:
+  headers:
+    customRequestHeaders:
+      Referer: ""
+      Origin: ""
