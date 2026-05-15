@@ -28,10 +28,21 @@ spec:
               du -sh /dst || true
 
               echo "Starting rsync..."
-              rsync -aH --numeric-ids --delete --info=progress2 /src/ /dst/
+              rsync -aH \
+                --no-owner \
+                --no-group \
+                --no-perms \
+                --delete \
+                --info=progress2 \
+                /src/ /dst/
 
               echo "Verification dry-run..."
-              rsync -aHn --numeric-ids --delete /src/ /dst/ | tee /tmp/rsync-dryrun.txt
+              rsync -aHn \
+                --no-owner \
+                --no-group \
+                --no-perms \
+                --delete \
+                /src/ /dst/ | tee /tmp/rsync-dryrun.txt
 
               if [ -s /tmp/rsync-dryrun.txt ]; then
                 echo "ERROR: dry-run still shows differences"
