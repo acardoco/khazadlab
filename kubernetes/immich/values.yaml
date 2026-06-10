@@ -96,6 +96,8 @@ redis:
 
 server:
   enabled: true
+  service:
+    type: LoadBalancer
   image:
     repository: ghcr.io/immich-app/immich-server
     pullPolicy: IfNotPresent
