@@ -97,10 +97,17 @@ redis:
 server:
   enabled: true
   service:
-    type: LoadBalancer
+    main:
+      type: LoadBalancer
   image:
     repository: ghcr.io/immich-app/immich-server
     pullPolicy: IfNotPresent
+  podSecurityContext:
+    runAsUser: 1057
+    runAsGroup: 1056
+    runAsNonRoot: true
+    fsGroup: 1056
+    fsGroupChangePolicy: OnRootMismatch
   ingress:
     main:
       enabled: false

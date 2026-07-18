@@ -18,24 +18,27 @@ spec:
       nodeSelector:
         kubernetes.io/hostname: andres-worker-intel
       securityContext:
-        fsGroup: 44                 
+        fsGroup: 1056
+        fsGroupChangePolicy: OnRootMismatch               
         supplementalGroups: [44, 992] # acceso a /dev/dri (video y GID 992)
-        seccompProfile:
-          type: Unconfined
+        # seccompProfile:
+        #   type: Unconfined
       containers:
         - name: jellyfin
           image: lscr.io/linuxserver/jellyfin:latest
           securityContext:
-            privileged: true
-            allowPrivilegeEscalation: true
+            privileged: false
+            allowPrivilegeEscalation: false
           imagePullPolicy: IfNotPresent
           env:
             - name: TZ
               value: Europe/Madrid
             - name: PUID
-              value: "1000"
+              value: "1057"
             - name: PGID
-              value: "1000"
+              value: "1056"
+            - name: UMASK
+              value: "002"
             - name: JELLYFIN_CONFIG_DIR
               value: /config
             - name: JELLYFIN_DATA_DIR
@@ -55,6 +58,7 @@ spec:
             - name: media
               mountPath: /data/videos
               subPath: movies
+              readOnly: true
             - name: media
               mountPath: /data/series
               subPath: tv
