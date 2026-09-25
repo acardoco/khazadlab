@@ -25,7 +25,7 @@ spec:
         #   type: Unconfined
       containers:
         - name: jellyfin
-          image: lscr.io/linuxserver/jellyfin:10.11.11
+          image: ghcr.io/linuxserver/jellyfin:10.11.11ubu2404-ls38
           securityContext:
             privileged: true
             allowPrivilegeEscalation: true
