@@ -25,6 +25,8 @@ spec:
           value: "180000"  # 180s
         - name: HEADLESS
           value: "true"
+        - name: DISABLE_MEDIA
+          value: "true"
 ---
 apiVersion: v1
 kind: Service
