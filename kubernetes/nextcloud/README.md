@@ -281,3 +281,14 @@ Defaulted container "nextcloud" out of: nextcloud, postgresql-isready (init)
   - productname: Nextcloud
   - extendedSupport: false
 ```
+
+## update imagen
+
+helm upgrade nextcloud nextcloud/nextcloud \
+  -n nextcloud \
+  --version 9.0.4 \
+  --reuse-values \
+  --set image.tag=33.0.10-apache \
+  --set image.pullPolicy=Always \
+  --server-side=false \
+  --wait --timeout 15m
