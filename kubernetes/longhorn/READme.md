@@ -114,3 +114,14 @@ log-level → ya está bien (Info).
 v2-data-engine → ya está apagado.
 v2-data-engine-guaranteed-instance-manager-cpu / v2-data-engine-cpu-mask → irrelevantes mientras V2 siga apagado.
 ```
+
+## Sobre upgrades
+Cuidado con el --reuse-values, que por defecto ha conserva las imágenes de Longhorn 1.9.2, aunque el chart de Helm es el 1.10.2.
+mejor lanzarlo asi:
+```bash
+helm upgrade longhorn longhorn/longhorn \
+  -n longhorn-system \
+  --version 1.10.2 \
+  -f .longhorn-values-v1.9.2.yaml \
+  --reset-values --wait --timeout 20m 
+```
