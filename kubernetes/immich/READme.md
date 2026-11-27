@@ -45,3 +45,9 @@ helm upgrade immich immich/immich \
   --version 0.9.3 \
   -n immich \
   -f values.yaml
+
+# Sobre immich-pg
+Para matar el pod:
+
+kubectl -n immich annotate clusters.postgresql.cnpg.io immich-pg \
+  cnpg.io/hibernation=on --overwrite
